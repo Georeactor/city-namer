@@ -1,0 +1,28 @@
+doctype
+html
+  head
+    meta(charset="utf-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1, user-scalable=no")
+    title OSM City Namer
+    link(rel="stylesheet", href="/lib/bootstrap.min.css")
+    link(rel="stylesheet", href="/lib/leaflet.css")
+    link(rel="stylesheet", href="/custom.css")
+  body
+    input#csrf(type="hidden", value=csrfToken)
+    .container
+      .row
+        .col-sm-12
+          h3.centered City Namer
+          #map
+      .row#namer
+        .col-sm-3
+          img(src="")
+        .col-sm-9
+          h4#cityname
+          h4#altname
+          input#usersname(type="text", name="usersname", value="", placeholder="English name", disabled="true")
+          br
+          button#skip.btn.btn-default(disabled="true") Skip
+    script(src="/lib/jquery-1.12.1.min.js")
+    script(src="/lib/leaflet.js")
+    script(src="/naming-app.js")
