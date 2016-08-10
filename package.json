@@ -2,8 +2,9 @@
   "name": "city-namer",
   "version": "1.0.0",
   "description": "Browse OpenStreetMap for cities missing localized names",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "test": "mocha"
   },
   "repository": {
