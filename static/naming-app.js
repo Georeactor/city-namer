@@ -31,9 +31,6 @@ $(function() {
     moveTimeout = setTimeout(makeQuery, 1000);
   });
 
-  // forms are inactive until data finishes loading
-  $('input, button').prop('disabled', false);
-
   // template for OSM Overpass query
   var query =
     "node \
@@ -46,6 +43,9 @@ $(function() {
 
   function makeQuery() {
     // makeQuery runs on startup and map dragend
+
+    // prevent data entry during this map update
+    $('input, button').prop('disabled', true);
 
     // remove markers from any previous queries
     $.map(pts, function(pt) {
@@ -97,6 +97,9 @@ $(function() {
 
       // initially focus on the most important place
       translatePlace(0);
+
+      // forms are inactive until data finishes loading
+      $('input, button').prop('disabled', false);
     });
   }
   makeQuery();
@@ -135,8 +138,10 @@ $(function() {
   }
 
   // advance to next place node (cycles at end)
-  $('#skip').click(function() {
-    loadPlace(placeIndex + 1);
+  $('#skip').click(function(e) {
+    e.preventDefault();
+    translatePlace(placeIndex + 1);
+    return false;
   });
 
   // remove title bar
