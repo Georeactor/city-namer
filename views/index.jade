@@ -16,22 +16,22 @@ html
           #map
       .row#namer
         .col-sm-12
-          form.form(action="/name", method="POST")
+          .form
             input#csrf(type="hidden", name="_csrf", value=csrfToken)
             input(type="hidden", name="osm_id")
-            label City name
-            .form-control
-              span#cityname Loading...
-            label Alternate name
-            .form-control
-              span#altname Loading alternate name...
-            label English name
-            .form-control
-              input#usersname(type="text", name="usersname", value="", placeholder="English name", disabled="true")
+            .form-group
+              label City name
+              h5#cityname Loading...
+            .form-group
+              label Alternate name
+              h5#altname Loading alternate name...
+            .form-group
+              label English name
+              input#usersname.form-control(type="text", name="usersname", value="", placeholder="English name", disabled="true")
 
             br
             button#skip.btn.btn-danger(disabled="true") Skip
-            button#suggest.btn.btn-success.pull-right(disabled="true", type="submit") Propose
+            button#suggest.btn.btn-success.pull-right(disabled="true") Propose
     script(src="/lib/jquery-1.12.1.min.js")
     script(src="/lib/leaflet.js")
     script(src="/naming-app.js")

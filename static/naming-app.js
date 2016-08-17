@@ -1,6 +1,6 @@
 $(function() {
   // list of currently active map-points
-  var pts = [];
+  var markers = [];
   var placeIndex = 0;
 
   // order of importance for a place=___ tag (translate a country before a state before a city)
@@ -15,7 +15,7 @@ $(function() {
   }).join(', ');
 
   // set up Leaflet map
-  var map = L.map('map').setView([25.238, 55.275], 12);
+  var map = L.map('map').setView([39.8985, 116.3989], 12);
   map.attributionControl.setPrefix('');
   L.tileLayer('//tile-{s}.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
@@ -48,12 +48,12 @@ $(function() {
     $('input, button').prop('disabled', true);
 
     // remove markers from any previous queries
-    $.map(pts, function(pt) {
-      if (pt.marker) {
-        map.removeLayer(pt.marker);
+    $.map(markers, function(marker) {
+      if (marker.circle) {
+        map.removeLayer(marker.circle);
       }
     });
-    pts = [];
+    markers = [];
 
     // read the boundary into the Overpass API template
     var bbox = map.getBounds();
@@ -69,7 +69,7 @@ $(function() {
       query: customQuery
     }, function(data) {
       // response contains OSM XML place nodes
-      pts = $(data).find('node');
+      var pts = $(data).find('node');
 
       // sort points by importance of place=___ tag
       pts.sort(function (a, b) {
@@ -90,9 +90,10 @@ $(function() {
         }).join('<br/>');
 
         // add a circleMarker to represent the point
-        pts[p].marker = L.circleMarker([ pt.attr('lat'), pt.attr('lon') ])
+        pt.circle = L.circleMarker([ pt.attr('lat'), pt.attr('lon') ])
           .bindPopup(tagtext);
-        pts[p].marker.addTo(map);
+        pt.circle.addTo(map);
+        markers.push(pt);
       });
 
       // initially focus on the most important place
@@ -108,20 +109,23 @@ $(function() {
     // called to populate the form with the i-th most important place
 
     // loop around if you have viewed all places
-    if (i >= pts.length) {
-      return loadPlace(0);
+    if (i >= markers.length) {
+      return translatePlace(0);
     }
 
-    $.each(pts, function(p, pt) {
+    $.each(markers, function(p, pt) {
+      if (!markers[p].circle) {
+        return;
+      }
       if (p === i) {
         // the target location
-        pts[p].marker.setStyle({ fillOpacity: 0.7, fillColor: '#00f' });
+        markers[p].circle.setStyle({ fillOpacity: 0.7, fillColor: '#00f' });
       } else {
-        pts[p].marker.setStyle({ fillOpacity: 0.7, fillColor: '#ccc' });
+        markers[p].circle.setStyle({ fillOpacity: 0.7, fillColor: '#ccc' });
       }
     });
 
-    var place = $(pts[i]);
+    var place = $(markers[i]);
     placeIndex = i;
     var cityname = place.find('tag[k="name"]').attr('v');
 
@@ -138,10 +142,23 @@ $(function() {
   }
 
   // advance to next place node (cycles at end)
-  $('#skip').click(function(e) {
-    e.preventDefault();
+  $('#skip').click(function() {
     translatePlace(placeIndex + 1);
-    return false;
+  });
+
+  // store proposed name and mark on map
+  $('#suggest').click(function() {
+    $('input, button').prop('disabled', true);
+    $.post('/name', {
+      _csrf: $('#csrf').val(),
+
+    }, function (response) {
+      console.log(response);
+      markers[placeIndex].circle.setStyle({ fillOpacity: 1, fillColor: '#0f0' });
+      markers[placeIndex].circle = null;
+      $('input, button').prop('disabled', false);
+      translatePlace(placeIndex + 1);
+    });
   });
 
   // remove title bar
