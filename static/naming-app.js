@@ -22,6 +22,9 @@ $(function() {
     maxZoom: 14,
   }).addTo(map);
 
+  // Leaflet-Hash plugin
+  new L.Hash(map);
+
   // reload place data after the map is moved by user
   var moveTimeout = null;
   map.on('dragend', function() {
@@ -103,7 +106,8 @@ $(function() {
       $('input, button').prop('disabled', false);
     });
   }
-  makeQuery();
+
+  setTimeout(makeQuery, 250);
 
   function translatePlace(i) {
     // called to populate the form with the i-th most important place
