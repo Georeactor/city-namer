@@ -3,6 +3,9 @@ $(function() {
   var markers = [];
   var placeIndex = 0;
 
+  // list of already-solved OSM ids
+  var solved = [];
+
   // order of importance for a place=___ tag (translate a country before a state before a city)
   var placeRelevance = ['hamlet', 'village', 'town', 'plot', 'city_block', 'neighborhood',
     'neighbourhood', 'quarter', 'island', 'suburb', 'borough', 'city', 'municipality', 'county',
@@ -84,6 +87,12 @@ $(function() {
       $.each(pts, function (p, pt) {
         var pt = $(pt);
 
+        var osm_id = pt.attr('id');
+        if (solved.indexOf(osm_id) > -1) {
+          // user already named this point
+          return;
+        }
+
         // return all tag key-value pairs for this point as a string
         var tags = $.map(pt.find('tag'), function(tag) {
           return $(tag);
@@ -131,6 +140,9 @@ $(function() {
 
     var place = $(markers[i]);
     placeIndex = i;
+
+    // load OSM id and label
+    var osm_id = place.attr('id');
     var cityname = place.find('tag[k="name"]').attr('v');
 
     // search for names in alternate languages
@@ -141,6 +153,7 @@ $(function() {
       altname = '';
     }
 
+    $('#osm_id').val(osm_id);
     $('#cityname').text(cityname)
     $('#altname').text(altname);
   }
@@ -152,15 +165,20 @@ $(function() {
 
   // store proposed name and mark on map
   $('#suggest').click(function() {
+    solved.push($('#osm_id').val());
     $('input, button').prop('disabled', true);
     $.post('/name', {
       _csrf: $('#csrf').val(),
-
+      suggested: $('#usersname').val(),
+      name: $('#cityname').text(),
+      language: targetLang,
+      osm_id: $('#osm_id').val()
     }, function (response) {
       console.log(response);
       markers[placeIndex].circle.setStyle({ fillOpacity: 1, fillColor: '#0f0' });
       markers[placeIndex].circle = null;
       $('input, button').prop('disabled', false);
+      $('#usersname').val('');
       translatePlace(placeIndex + 1);
     });
   });

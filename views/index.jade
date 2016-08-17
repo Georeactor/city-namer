@@ -18,7 +18,7 @@ html
         .col-sm-12
           .form
             input#csrf(type="hidden", name="_csrf", value=csrfToken)
-            input(type="hidden", name="osm_id")
+            input#osm_id(type="hidden", name="osm_id")
             .form-group
               label City name
               h5#cityname Loading...
