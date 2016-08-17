@@ -8,7 +8,6 @@ html
     link(rel="stylesheet", href="/lib/leaflet.css")
     link(rel="stylesheet", href="/custom.css")
   body
-    input#csrf(type="hidden", value=csrfToken)
     .container
       .row
         .col-sm-12
@@ -18,6 +17,7 @@ html
       .row#namer
         .col-sm-12
           form.form(action="/name", method="POST")
+            input#csrf(type="hidden", name="_csrf", value=csrfToken)
             input(type="hidden", name="osm_id")
             label City name
             .form-control

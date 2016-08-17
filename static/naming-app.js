@@ -50,7 +50,7 @@ $(function() {
     // remove markers from any previous queries
     $.map(pts, function(pt) {
       if (pt.marker) {
-        pt.marker.setMap(null);
+        map.removeLayer(pt.marker);
       }
     });
     pts = [];
@@ -115,9 +115,9 @@ $(function() {
     $.each(pts, function(p, pt) {
       if (p === i) {
         // the target location
-        pts[p].marker.setStyle({ fill: '#00f' });
+        pts[p].marker.setStyle({ fillOpacity: 0.7, fillColor: '#00f' });
       } else {
-        pts[p].marker.setStyle({ fill: '#ccc' });
+        pts[p].marker.setStyle({ fillOpacity: 0.7, fillColor: '#ccc' });
       }
     });
 
