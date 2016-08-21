@@ -10,3 +10,13 @@
   margin: 0;
   padding: 0;
 }
+
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .mobile-only {
+    display: inline;
+  }
+}

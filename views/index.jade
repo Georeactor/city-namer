@@ -11,28 +11,28 @@ html
     .container
       .row
         .col-sm-12
-          button#hider.btn.btn-primary.pull-right Hide
-          h3.centered City Namer
-          #map
-      .row#namer
-        .col-sm-12
-          .form
-            input#csrf(type="hidden", name="_csrf", value=csrfToken)
-            input#osm_id(type="hidden", name="osm_id")
-            .form-group
-              label City name
-              h5#cityname Loading...
-            .form-group
-              label Alternate name
-              h5#altname Loading alternate name...
-            .form-group
-              label English name
-              input#usersname.form-control(type="text", name="usersname", value="", placeholder="English name", disabled="true")
-
+          h2.centered City Namer
+          h4.centered
+            span Adding placenames across OpenStreetMap
             br
-            button#skip.btn.btn-danger.btn-lg(disabled="true") Skip
-            button#suggest.btn.btn-success.btn-lg.pull-right(disabled="true") Propose
-    script(src="/lib/jquery-1.12.1.min.js")
-    script(src="/lib/leaflet.js")
-    script(src="/lib/leaflet-hash.js")
-    script(src="/naming-app.js")
+            br
+            a.btn.btn-primary.btn-lg(href="/app") Demo App
+            hr
+      .row
+        .col-sm-6
+          h4 Adding local placenames
+          p Remote and foreign mappers mean well, but may use their own languages to label and define OpenStreetMap's placenames around the world.
+          p When viewing a region in the project-mapper, larger cities and placenames are translated before smaller towns and neighborhoods.
+          p This method can also be used to promote minority languages and create maps in different scripts.
+        .col-sm-6
+          h4 Adding alternate placenames
+          p As OpenStreetMap is used in professional, commercial, and emergency situations, it's important to have the map labels be legible by users from all over the world.
+          p 
+      .row
+        .col-sm-6
+          h4 Getting Involved
+          p
+            span Help write&nbsp;
+            a(href="https://github.com/Georeactor/city-namer/") City-Namer
+            span &nbsp; on GitHub.
+          

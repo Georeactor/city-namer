@@ -26,9 +26,10 @@ $(function() {
   }).addTo(map);
 
   // Leaflet-Hash plugin
-  new L.Hash(map);
+  // new L.Hash(map);
 
   // reload place data after the map is moved by user
+  /*
   var moveTimeout = null;
   map.on('dragend', function() {
     if (moveTimeout) {
@@ -36,6 +37,7 @@ $(function() {
     }
     moveTimeout = setTimeout(makeQuery, 1000);
   });
+  */
 
   // template for OSM Overpass query
   var query =
@@ -51,7 +53,7 @@ $(function() {
     // makeQuery runs on startup and map dragend
 
     // prevent data entry during this map update
-    $('input, button').prop('disabled', true);
+    $('input, button').not('.keep-on').prop('disabled', true);
 
     // remove markers from any previous queries
     $.map(markers, function(marker) {
@@ -166,7 +168,7 @@ $(function() {
   // store proposed name and mark on map
   $('#suggest').click(function() {
     solved.push($('#osm_id').val());
-    $('input, button').prop('disabled', true);
+    $('input, button').not('.keep-on').prop('disabled', true);
     $.post('/name', {
       _csrf: $('#csrf').val(),
       suggested: $('#usersname').val(),

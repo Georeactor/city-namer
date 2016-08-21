@@ -39,22 +39,27 @@ app.use(session({
 const csrfProtection = csrf({ cookie: true });
 
 // homepage for testing
-app.get('/', csrfProtection, function (req, res) {
-  res.render('index', {
+app.get('/', (req, res) => {
+  res.render('index');
+});
+
+// map for naming
+app.get('/app', csrfProtection, (req, res) => {
+  res.render('naming', {
     csrfToken: req.csrfToken()
   });
 });
 
 // JSON to check which places are already named in the database
-app.post('/named', csrfProtection, function (req, res) {
-  Place.find({ osm_id: { $in: req.body.osm_ids } }).select('osm_id').exec(function(err, places) {
+app.post('/named', csrfProtection, (req, res) => {
+  Place.find({ osm_id: { $in: req.body.osm_ids } }).select('osm_id').exec((err, places) => {
     return res.json(err || places);
   });
 });
 
-app.post('/overpass', csrfProtection, function (req, res) {
+app.post('/overpass', csrfProtection, (req, res) => {
   // this query should return a string with OSM XML
-  request('http://overpass-api.de/api/interpreter?data=' + req.body.query.replace(/\s+/g, ''), function (err, resp, body) {
+  request('http://overpass-api.de/api/interpreter?data=' + req.body.query.replace(/\s+/g, ''), (err, resp, body) => {
     if (err) {
       console.log('Overpass API error');
       return res.json(err);
@@ -64,7 +69,7 @@ app.post('/overpass', csrfProtection, function (req, res) {
 });
 
 // save a suggested place-name translation to the database
-app.post('/name', csrfProtection, function (req, res) {
+app.post('/name', csrfProtection, (req, res) => {
   var p = new Place({
     user_id: '',
     osm_id: req.body.osm_id,
@@ -73,18 +78,20 @@ app.post('/name', csrfProtection, function (req, res) {
     language: req.body.language,
     saved: new Date()
   });
-  p.save(function(err) {
+  p.save((err) => {
     return res.json(err || { status: 'success', _id: p._id });
   });
 });
 
 // browse to verify everything makes sense
-app.get('/names', function (req, res) {
-  Place.find({}).sort('-saved').limit(10).exec(function(err, places) {
+app.get('/names', (req, res) => {
+  Place.find({}).sort('-saved').limit(10).exec( (err, places) => {
     return res.json(err || places);
   });
 });
 
-app.listen(process.env.PORT || 8080, function() { });
+app.listen(process.env.PORT || 8080, () => {
+  console.log('app is running');
+});
 
 module.exports = app;
