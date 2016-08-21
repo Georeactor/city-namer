@@ -50,6 +50,12 @@ app.get('/app', csrfProtection, (req, res) => {
   });
 });
 
+// user registration and management
+require('./login')(app, csrfProtection);
+
+// official task manager / projects interface
+require('./project')(app, csrfProtection);
+
 // JSON to check which places are already named in the database
 app.post('/named', csrfProtection, (req, res) => {
   Place.find({ osm_id: { $in: req.body.osm_ids } }).select('osm_id').exec((err, places) => {

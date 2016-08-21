@@ -1,0 +1,52 @@
+doctype
+html
+  head
+    meta(charset="utf-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1, user-scalable=no")
+    title OSM City Namer
+    link(rel="stylesheet", href="/lib/bootstrap.min.css")
+    link(rel="stylesheet", href="/lib/select2.min.css")    
+    link(rel="stylesheet", href="/lib/select2-bootstrap.css")
+    link(rel="stylesheet", href="/custom.css")
+  body
+    .container
+      .row
+        .col-sm-12
+          h2.centered City Namer
+          h4.centered Adding placenames across OpenStreetMap
+      .row
+        .col-sm-6
+          form.form.well(action="/register", method="POST")
+            input(type="hidden", name="_csrf", value=csrfToken)
+            .form-group
+              label OSM Username
+              input.form-control.input-lg(name="osm_name")
+            .form-group
+              label Name
+              input.form-control.input-lg(name="name")
+            .form-group
+              label Preferred Language (one)
+              input.form-control(name="preferredLanguage")
+            .form-group
+              label Languages which you READ
+              select.select2.form-control.input-lg(multiple="multiple", name="read")
+                option(value="en") English
+                option(value="es") Spanish
+                option(value="fr") French
+                option(value="ne") Nepali
+            .form-group
+              label Languages which you WRITE
+              select.select2.form-control.input-lg(multiple="multiple", name="write")
+                option(value="en") English
+                option(value="es") Spanish
+                option(value="fr") French
+                option(value="ne") Nepali
+            input.btn.btn-success(type="submit", value="Create User")
+            
+        .col-sm-6
+          h4 What is this?
+          p This is an experimental, open source project to add placenames to OpenStreetMap.
+          
+    script(src="/lib/jquery-1.12.1.min.js")
+    script(src="/lib/select2.full.js")
+    script(src="/language-select.js")

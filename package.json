@@ -29,6 +29,7 @@
     "jade": "^1.11.0",
     "mongoose": "^4.5.8",
     "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
     "passport-openstreetmap": "^0.1.2",
     "request": "^2.74.0",
     "time-ago": "^0.1.0"
