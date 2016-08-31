@@ -9,21 +9,18 @@ function userSetup(app, csrfProtection) {
   // Passport module setup
   app.use(passport.initialize());
   app.use(passport.session());
-  /*
   passport.use(new OpenStreetMapStrategy({
-    consumerKey: OPENSTREETMAP_CONSUMER_KEY,
-    consumerSecret: OPENSTREETMAP_CONSUMER_SECRET,
-    callbackURL: "http://127.0.0.1:3000/auth/openstreetmap/callback"
-  }, (token, tokenSecret, profile, done) => {
-      User.findOrCreate({ openstreetmapId: profile.id }, (err, user) => {
-        return done(err, user);
-      });
+      consumerKey: process.env.OPENSTREETMAP_CONSUMER_KEY,
+      consumerSecret: process.env.OPENSTREETMAP_CONSUMER_SECRET,
+      callbackURL: "http://city-namer.herokuapp.com/auth/openstreetmap/callback"
+    }, (token, tokenSecret, profile, done) => {
+      console.log(profile);
+      return done(err, null);
     }
   ));
-  */
 
   // user registration form
-  app.get('/register', csrfProtection, (req, res) => {
+  app.get('/register*', csrfProtection, (req, res) => {
     res.render('register', {
       csrfToken: req.csrfToken()
     });
@@ -31,14 +28,29 @@ function userSetup(app, csrfProtection) {
 
   // respond to user POST
   app.post('/register', csrfProtection, (req, res) => {
-    res.redirect('/projects');
+    var user_input = {
+      osm_id: req.body.osm_id,
+      name: req.body.name,
+      preferLanguage: req.body.preferLanguage,
+      readLanguages: req.body.readLanguages,
+      writeLanguages: req.body.writeLanguages
+    };
+    console.log(user_input);
+
+    var u = new User(user_input);
+    u.save((err) => {
+      if (err) {
+        return res.json(err);
+      }
+      res.redirect('/login?withname=' + req.body.userName);
+    });
   });
 
   // OSM OAuth
   app.get('/auth/openstreetmap', passport.authenticate('openstreetmap'));
   app.get('/auth/openstreetmap/callback',
     passport.authenticate('openstreetmap', { failureRedirect: '/login' }), (req, res) => {
-      res.redirect('/projects');
+      res.redirect('/register');
     });
 }
 

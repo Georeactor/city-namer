@@ -90,7 +90,7 @@ app.post('/name', csrfProtection, (req, res) => {
 });
 
 // browse to verify everything makes sense
-app.get('/names', (req, res) => {
+app.get('/names', csrfProtection, (req, res) => {
   Place.find({}).sort('-saved').limit(10).exec( (err, places) => {
     return res.json(err || places);
   });
