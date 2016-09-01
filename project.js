@@ -6,8 +6,8 @@ function projectSetup(app, csrfProtection) {
     var query = Project.find({}).sort('-saved');
     if (req.user) {
       query = query.find({
-        readLanguage: { $in: user.readLanguages },
-        writeLanguage: { $in: user.writeLanguages }
+        readLanguage: { $in: req.user.readLanguages },
+        writeLanguage: { $in: req.user.writeLanguages }
       });
     }
 

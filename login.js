@@ -15,14 +15,26 @@ function userSetup(app, csrfProtection) {
       consumerSecret: process.env.OPENSTREETMAP_CONSUMER_SECRET,
       callbackURL: "http://city-namer.herokuapp.com/auth/openstreetmap/callback"
     }, (token, tokenSecret, profile, done) => {
-      console.log('initial callback');
-      User.find({ osm_id: profile._xml2js.user.display_name }, (err, user) => {
-        console.log('found user');
-        console.log(user);
-        return done(err, user[0]);
+      var osm_user_name = profile._xml2js.user['@'].display_name;
+      console.log(osm_user_name);
+      User.findOne({ osm_id: osm_user_name }, (err, user) => {
+        done(err, user);
       });
     })
   );
+
+  passport.serializeUser(function(user, done) {
+    done(null, user);
+  });
+  passport.deserializeUser(function(obj, done) {
+    done(null, obj);
+  });
+
+  app.get('/users', (req, res) => {
+    User.find({}).exec((err, users) => {
+      res.json(users);
+    });
+  });
 
   // user registration form
   app.get('/register*', csrfProtection, (req, res) => {
@@ -63,7 +75,7 @@ function userSetup(app, csrfProtection) {
   app.get('/auth/openstreetmap', passport.authenticate('openstreetmap'));
   app.get('/auth/openstreetmap/callback',
     passport.authenticate('openstreetmap', { failureRedirect: '/login' }), (req, res) => {
-      res.redirect('/register');
+      res.redirect('/projects');
     });
 }
 
