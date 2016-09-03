@@ -9,19 +9,21 @@ function userSetup(app, csrfProtection) {
   // Passport module setup
   app.use(passport.initialize());
   app.use(passport.session());
-  passport.use(
-    new OpenStreetMapStrategy({
-      consumerKey: process.env.OPENSTREETMAP_CONSUMER_KEY,
-      consumerSecret: process.env.OPENSTREETMAP_CONSUMER_SECRET,
-      callbackURL: "http://city-namer.herokuapp.com/auth/openstreetmap/callback"
-    }, (token, tokenSecret, profile, done) => {
-      var osm_user_name = profile._xml2js.user['@'].display_name;
-      console.log(osm_user_name);
-      User.findOne({ osm_id: osm_user_name }, (err, user) => {
-        done(err, user);
-      });
-    })
-  );
+  if (process.env.OPENSTREETMAP_CONSUMER_KEY && process.env.OPENSTREETMAP_CONSUMER_SECRET) {
+    passport.use(
+      new OpenStreetMapStrategy({
+        consumerKey: process.env.OPENSTREETMAP_CONSUMER_KEY,
+        consumerSecret: process.env.OPENSTREETMAP_CONSUMER_SECRET,
+        callbackURL: "http://city-namer.herokuapp.com/auth/openstreetmap/callback"
+      }, (token, tokenSecret, profile, done) => {
+        var osm_user_name = profile._xml2js.user['@'].display_name;
+        console.log(osm_user_name);
+        User.findOne({ osm_id: osm_user_name }, (err, user) => {
+          done(err, user);
+        });
+      })
+    );
+  }
 
   passport.serializeUser(function(user, done) {
     done(null, user);

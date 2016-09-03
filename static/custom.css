@@ -11,6 +11,23 @@
   padding: 0;
 }
 
+.project {
+  text-align: center;
+}
+
+.project a, .project img {
+  display: block;
+}
+
+.project img {
+  border: 1px solid silver;
+  margin-left: auto;
+  margin-right: auto;
+  min-width: 100px;
+  min-height: 100px;
+  max-width: 100%;
+}
+
 .mobile-only {
   display: none;
 }

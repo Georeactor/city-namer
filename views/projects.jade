@@ -25,6 +25,20 @@ html
               span &nbsp;&nbsp;&nbsp;&nbsp;
               a.btn.btn-default.btn-lg(href="/register") Sign Up
             hr
-      .row
-        .col-sm-12
-          
+      for row in rows
+        .row
+          for project in row
+            .col-sm-4
+              .project
+                a(href="/projects/" + project._id)
+                  img(src="//api.mapbox.com/styles/v1/mapbox/streets-v9/static/#{project.lng},#{project.lat},7/300x300?access_token=pk.eyJ1IjoidGhlLWFzaWEtZm91bmRhdGlvbiIsImEiOiJpODl0Xy00In0.on3pFdtDeQSAC04tryO_hA")
+                  h4= project.title
+                small #{project.readLanguages.join(', ')}
+                strong &nbsp;&nbsp;&rarr;&nbsp;&nbsp;
+                small #{project.writeLanguages.join(', ')}
+      if user || true
+        hr
+        .row
+          .col-sm-6
+            a.btn.btn-success(href="/projects/new")
+              h4 Create a new project

@@ -1,0 +1,31 @@
+doctype
+html
+  head
+    meta(charset="utf-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1, user-scalable=no")
+    title OSM City Namer
+    link(rel="stylesheet", href="/lib/bootstrap.min.css")
+    link(rel="stylesheet", href="/custom.css")
+  body
+    .container
+      .row
+        .col-sm-12
+          h2.centered City Namer
+          h4.centered
+            span Adding placenames across OpenStreetMap
+            br
+            br
+            if user
+              span You're logged in as&nbsp;
+              span= user.name
+              span &nbsp;&nbsp;&nbsp;&nbsp;
+              a.btn.btn-default.btn-lg(href="/logout") Log Out
+            hr
+      .row
+        .col-sm-6
+          h4 Creating a City-Namer Project
+        .col-sm-6
+          .well
+            form(action="/projects/new", method="POST")
+              input(type="hidden", name="_csrf", value=csrfToken)
+              button.btn.btn-success Add

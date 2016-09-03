@@ -5,7 +5,9 @@ const projectSchema = mongoose.Schema({
   founding_user_osm_id: String,
   targetLanguage: String,
   directions: String,
-  saved: Date
+  saved: Date,
+  lat: Number,
+  lng: Number
 });
 
 module.exports = mongoose.model('Project', projectSchema);
