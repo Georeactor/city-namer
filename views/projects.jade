@@ -33,9 +33,9 @@ html
                 a(href="/projects/" + project._id)
                   img(src="//api.mapbox.com/styles/v1/mapbox/streets-v9/static/#{project.lng},#{project.lat},7/300x300?access_token=pk.eyJ1IjoidGhlLWFzaWEtZm91bmRhdGlvbiIsImEiOiJpODl0Xy00In0.on3pFdtDeQSAC04tryO_hA")
                   h4= project.title
-                small #{project.readLanguages.join(', ')}
+                small #{project.fromLanguages.join(', ')}
                 strong &nbsp;&nbsp;&rarr;&nbsp;&nbsp;
-                small #{project.writeLanguages.join(', ')}
+                small #{project.toLanguage}
       if user || true
         hr
         .row

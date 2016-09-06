@@ -12,27 +12,15 @@ function projectSetup(app, csrfProtection) {
     }
 
     if (readLanguages) {
-      query = query.find({ readLanguage: { $in: readLanguages } });
+      query = query.find({ fromLanguages: { $in: readLanguages } });
     }
     if (writeLanguages) {
-      query = query.find({ writeLanguage: { $in: writeLanguages } });
+      query = query.find({ toLanguage: { $in: writeLanguages } });
     }
 
     query.exec( (err, projects) => {
       if (err) {
         return res.json(err);
-      }
-
-      if (!projects.length) {
-        // insert test projects
-        projects = [{
-          _id: 1,
-          title: 'Nepal',
-          lng: -71,
-          lat: 43,
-          readLanguages: ['en', 'fr'],
-          writeLanguages: ['ne']
-        }];
       }
 
       var rows = [];
