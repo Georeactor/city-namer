@@ -1,5 +1,5 @@
 $(function() {
-  $(".select2").select2({
+  $(".language-select").select2({
 		theme: "bootstrap",
 		placeholder: "Select languages"
 	});

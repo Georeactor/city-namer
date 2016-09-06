@@ -26,7 +26,9 @@ $(function() {
   }).addTo(map);
 
   // Leaflet-Hash plugin
-  // new L.Hash(map);
+  if (L.Hash) {
+    new L.Hash(map);
+  }
 
   // reload place data after the map is moved by user
   /*

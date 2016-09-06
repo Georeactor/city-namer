@@ -5,6 +5,7 @@ html
     meta(name="viewport", content="width=device-width, initial-scale=1, user-scalable=no")
     title OSM City Namer
     link(rel="stylesheet", href="/lib/bootstrap.min.css")
+    link(rel="stylesheet", href="/lib/leaflet.css")
     link(rel="stylesheet", href="/custom.css")
   body
     .container
@@ -24,8 +25,39 @@ html
       .row
         .col-sm-6
           h4 Creating a City-Namer Project
+          p This is an ALPHA project.
+          p You should define an area that you know well, and recruit users who can complete the task.
+          p It's not necessary for users to know how to edit OpenStreetMap, but they must create an OpenStreetMap account.
         .col-sm-6
           .well
-            form(action="/projects/new", method="POST")
+            form.form(action="/projects/new", method="POST")
               input(type="hidden", name="_csrf", value=csrfToken)
-              button.btn.btn-success Add
+              input#lat(type="hidden", name="lat")
+              input#lng(type="hidden", name="lng")
+              input#zoom(type="hidden", name="zoom")
+              
+              #pick-map
+              
+              .form-group
+                label Translate FROM these languages:
+                select.select2.form-control.input-lg.language-select(multiple="multiple", name="fromLanguages")
+                  option(value="en") English
+                  option(value="es") Spanish
+                  option(value="fr") French
+                  option(value="ne") Nepali
+              
+              .form-group
+                label Translate TO this language:
+                select.form-control.input-lg(name="toLanguage")
+                
+              .form-group
+                label Additional directions
+                textarea(name="directions") Follow the prompts to edit city names.
+              
+              button.btn.btn-success Start Project
+
+    script(src="/lib/jquery-1.12.1.min.js")
+    script(src="/lib/leaflet.js")
+    script(src="/lib/select2.full.js")
+    script(src="/language-select.js")
+    script(src="/pick-map.js")

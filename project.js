@@ -57,8 +57,19 @@ function projectSetup(app, csrfProtection) {
   });
 
   app.post('/projects/new', csrfProtection, (req, res) => {
+    if (!req.user) {
+      return res.redirect('/login');
+    }
     var p = new Project({
-      
+      founding_user_id: req.user._id,
+      founding_user_osm_id: req.user.osm_id,
+      fromLanguages: req.body.fromLanguages,
+      toLanguage: req.body.toLanguage,
+      directions: req.body.directions,
+      saved: new Date(),
+      lat: req.body.lat,
+      lng: req.body.lng,
+      zoom: req.body.zoom
     });
     p.save((err) => {
       if (err) {
