@@ -7,8 +7,8 @@ $(function() {
   }).addTo(map);
 
   map.on('moveend', function() {
-    $('#lat').val(map.getCenter().lat);
-    $('#lng').val(map.getCenter().lng);
-    $('#zoom').val(map.getZoom());
+    $('#lat').val(map.getCenter().lat.toFixed(6));
+    $('#lng').val(map.getCenter().lng.toFixed(6));
+    $('#zoom').val(Math.round(map.getZoom()));
   });
 });

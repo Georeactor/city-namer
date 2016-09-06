@@ -38,9 +38,17 @@ app.use(session({
 
 const csrfProtection = csrf({ cookie: true });
 
+// user registration and management
+require('./login')(app, csrfProtection);
+
+// official task manager / projects interface
+require('./project')(app, csrfProtection);
+
 // homepage for testing
 app.get('/', (req, res) => {
-  res.render('index');
+  res.render('index', {
+    user: req.user
+  });
 });
 
 // map for naming
@@ -49,12 +57,6 @@ app.get('/app', csrfProtection, (req, res) => {
     csrfToken: req.csrfToken()
   });
 });
-
-// user registration and management
-require('./login')(app, csrfProtection);
-
-// official task manager / projects interface
-require('./project')(app, csrfProtection);
 
 // JSON to check which places are already named in the database
 app.post('/named', csrfProtection, (req, res) => {
