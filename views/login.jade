@@ -14,7 +14,16 @@ html
           h4.centered Adding placenames across OpenStreetMap
       .row
         .col-sm-6
-          a.btn.btn-primary(href="/auth/openstreetmap") Connect to OSM
-          form.form.well(action="/login", method="POST")
-            input(type="hidden", name="_csrf", value=csrfToken)
-            button.btn.btn-primary Log In
+          .well
+            h4 Do you have an OpenStreetMap account?
+            p
+              span First, make sure to&nbsp;
+              a.btn.btn-primary(href="https://www.openstreetmap.org/user/new") Register on OpenStreetMap
+              span .
+            hr
+            h4 Once you have that:
+            a.btn.btn-primary(href="/auth/openstreetmap") Connect to OpenStreetMap
+        .col-sm-6
+          h4 What is this?
+          p names.georeactor.com is an experimental, open source project to add placenames to OpenStreetMap.
+              

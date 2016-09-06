@@ -20,7 +20,7 @@ html
             input(type="hidden", name="_csrf", value=csrfToken)
             .form-group
               label OSM Username
-              input.form-control.input-lg(name="osm_id")
+              input.form-control.input-lg(name="osm_id", disabled="disabled", value=user.osm_id)
             .form-group
               label Name
               input.form-control.input-lg(name="name")
@@ -45,7 +45,7 @@ html
             
         .col-sm-6
           h4 What is this?
-          p This is an experimental, open source project to add placenames to OpenStreetMap.
+          p names.georeactor.com is an experimental, open source project to add placenames to OpenStreetMap.
           
     script(src="/lib/jquery-1.12.1.min.js")
     script(src="/lib/select2.full.js")

@@ -57,7 +57,15 @@ function projectSetup(app, csrfProtection) {
   });
 
   app.post('/projects/new', csrfProtection, (req, res) => {
-    
+    var p = new Project({
+      
+    });
+    p.save((err) => {
+      if (err) {
+        return res.json(err);
+      }
+      res.redirect('/projects/' + p._id);
+    });
   });
 
   app.get('/projects/:id', csrfProtection, (req, res) => {
