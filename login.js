@@ -14,7 +14,7 @@ function userSetup(app, csrfProtection) {
       new OpenStreetMapStrategy({
         consumerKey: process.env.OPENSTREETMAP_CONSUMER_KEY,
         consumerSecret: process.env.OPENSTREETMAP_CONSUMER_SECRET,
-        callbackURL: "http://city-namer.herokuapp.com/auth/openstreetmap/callback"
+        callbackURL: "http://names.georeactor.com/auth/openstreetmap/callback"
       }, (token, tokenSecret, profile, done) => {
         var osm_user_name = profile._xml2js.user['@'].display_name;
         console.log(osm_user_name);
