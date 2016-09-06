@@ -5,6 +5,8 @@ html
     meta(name="viewport", content="width=device-width, initial-scale=1, user-scalable=no")
     title OSM City Namer
     link(rel="stylesheet", href="/lib/bootstrap.min.css")
+    link(rel="stylesheet", href="/lib/select2.min.css")    
+    link(rel="stylesheet", href="/lib/select2-bootstrap.css")
     link(rel="stylesheet", href="/lib/leaflet.css")
     link(rel="stylesheet", href="/custom.css")
   body
@@ -49,10 +51,14 @@ html
               .form-group
                 label Translate TO this language:
                 select.form-control.input-lg(name="toLanguage")
+                  option(value="en") English
+                  option(value="es") Spanish
+                  option(value="fr") French
+                  option(value="ne") Nepali
                 
               .form-group
                 label Additional directions
-                textarea(name="directions") Follow the prompts to edit city names.
+                textarea.form-control(name="directions") Follow the prompts to edit city names.
               
               button.btn.btn-success Start Project
 
