@@ -17,7 +17,7 @@ html
             br
             if user
               span You're logged in as&nbsp;
-              a(href="http://openstreetmap.org/user/#{user.osm_id}")= user.name
+              a(href="http://openstreetmap.org/user/#{user.osm_id}") #{user.name} (#{user.osm_id})
               span &nbsp;&nbsp;&nbsp;&nbsp;
               a.btn.btn-default.btn-lg(href="/logout") Log Out
             else

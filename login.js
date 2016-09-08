@@ -19,8 +19,8 @@ function userSetup(app, csrfProtection) {
         var osm_user_name = profile._xml2js.user['@'].display_name;
         console.log(osm_user_name);
         User.find({ osm_id: osm_user_name }, (err, user) => {
-          if (err || user) {
-            return done(err, user);
+          if (err) {
+            return done(err, null);
           }
           var u = new User({
             osm_id: osm_user_name,
@@ -74,20 +74,25 @@ function userSetup(app, csrfProtection) {
 
   // respond to user POST
   app.post('/register', csrfProtection, (req, res) => {
-    var u = req.user;
-    if (!u) {
+    if (!req.user) {
       return res.redirect('/login');
     }
 
-    u.name = req.body.name;
-    u.preferLanguage = req.body.preferLanguage;
-    u.readLanguages = req.body.readLanguages;
-    u.writeLanguages = req.body.writeLanguages;
-    u.save((err) => {
+    User.findById(req.user._id, (err, u) => {
       if (err) {
         return res.json(err);
       }
-      res.redirect('/projects');
+
+      u.name = req.body.name;
+      u.preferLanguage = req.body.preferLanguage;
+      u.readLanguages = req.body.readLanguages;
+      u.writeLanguages = req.body.writeLanguages;
+      u.save((err) => {
+        if (err) {
+          return res.json(err);
+        }
+        res.redirect('/projects');
+      });
     });
   });
 
