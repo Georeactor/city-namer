@@ -42,12 +42,6 @@ function userSetup(app, csrfProtection) {
     done(null, obj);
   });
 
-  app.get('/users', (req, res) => {
-    User.find({}).exec((err, users) => {
-      res.json(users);
-    });
-  });
-
   // user registration form
   app.get('/register', csrfProtection, (req, res) => {
     res.render('register', {

@@ -18,7 +18,7 @@ html
         .col-sm-12
           .form
             input#csrf(type="hidden", name="_csrf", value=csrfToken)
-            input#osm_id(type="hidden", name="osm_id")
+            input#osm_place_id(type="hidden", name="osm_place_id")
             .form-group
               label City name
               h5#cityname Loading...
@@ -26,8 +26,8 @@ html
               label Alternate name
               h5#altname Loading alternate name...
             .form-group
-              label English name
-              input#usersname.form-control(type="text", name="usersname", value="", placeholder="English name", disabled="true")
+              label Suggest #{endlang} name
+              input#usersname.form-control(type="text", name="usersname", value="", placeholder="#{endlang} name", disabled="true")
 
             br
             button#skip.btn.btn-danger.btn-lg(disabled="true") Skip

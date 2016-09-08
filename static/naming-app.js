@@ -81,8 +81,8 @@ $(function() {
       $.each(pts, function (p, pt) {
         var pt = $(pt);
 
-        var osm_id = pt.attr('id');
-        if (solved.indexOf(osm_id) > -1) {
+        var osm_place_id = pt.attr('id');
+        if (solved.indexOf(osm_place_id) > -1) {
           // user already named this point
           return;
         }
@@ -136,7 +136,7 @@ $(function() {
     placeIndex = i;
 
     // load OSM id and label
-    var osm_id = place.attr('id');
+    var osm_place_id = place.attr('id');
     var cityname = place.find('tag[k="name"]').attr('v');
 
     // search for names in alternate languages
@@ -147,7 +147,7 @@ $(function() {
       altname = '';
     }
 
-    $('#osm_id').val(osm_id);
+    $('#osm_place_id').val(osm_place_id);
     $('#cityname').text(cityname)
     $('#altname').text(altname);
   }
@@ -159,14 +159,14 @@ $(function() {
 
   // store proposed name and mark on map
   $('#suggest').click(function() {
-    solved.push($('#osm_id').val());
+    solved.push($('#osm_place_id').val());
     $('input, button').not('.keep-on').prop('disabled', true);
     $.post('/name', {
       _csrf: $('#csrf').val(),
       suggested: $('#usersname').val(),
       name: $('#cityname').text(),
       language: targetLang,
-      osm_id: $('#osm_id').val()
+      osm_place_id: $('#osm_place_id').val()
     }, function (response) {
       console.log(response);
       markers[placeIndex].circle.setStyle({ fillOpacity: 1, fillColor: '#0f0' });

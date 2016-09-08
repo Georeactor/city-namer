@@ -1,6 +1,15 @@
 const User = require('./models/user');
 const Project = require('./models/project');
 
+const endlangs = {
+  'en': 'English',
+  'fr': 'French',
+  'es': 'Spanish',
+  'ne': 'Nepali',
+  'ht': 'Haitian Creole',
+  'zh': 'Chinese'
+};
+
 function projectSetup(app, csrfProtection) {
   app.get('/projects', csrfProtection, (req, res) => {
     var query = Project.find({}).sort('-saved');
@@ -80,6 +89,7 @@ function projectSetup(app, csrfProtection) {
         zoom: project.zoom,
         fromLanguages: project.fromLanguages,
         toLanguage: project.toLanguage,
+        endlang: endlangs[project.toLanguage],
         csrfToken: req.csrfToken()
       });
     });

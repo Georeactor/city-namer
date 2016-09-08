@@ -59,6 +59,7 @@ app.get('/app', csrfProtection, (req, res) => {
     zoom: 12,
     fromLanguages: ['es', 'fr'],
     toLanguage: 'en',
+    endlang: 'English',
     csrfToken: req.csrfToken()
   });
 });
@@ -97,9 +98,13 @@ app.post('/overpass', csrfProtection, (req, res) => {
 
 // save a suggested place-name translation to the database
 app.post('/name', csrfProtection, (req, res) => {
+  if (!req.user) {
+    return res.redirect('/login');
+  }
   var p = new Place({
-    user_id: '',
-    osm_id: req.body.osm_id,
+    user_id: req.user._id,
+    osm_user_id: req.user.osm_id,
+    osm_place_id: req.body.osm_place_id,
     name: req.body.name,
     suggested: req.body.suggested,
     language: req.body.language,
