@@ -67,6 +67,11 @@ function userSetup(app, csrfProtection) {
     res.redirect('/projects');
   });
 
+  app.get('/logout', (req, res) => {
+    req.logout();
+    res.redirect('/?loggedout');
+  });
+
   // respond to user POST
   app.post('/register', csrfProtection, (req, res) => {
     var u = req.user;
