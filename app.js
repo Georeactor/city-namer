@@ -54,6 +54,11 @@ app.get('/', (req, res) => {
 // map for naming
 app.get('/app', csrfProtection, (req, res) => {
   res.render('naming', {
+    lat: 39.8985,
+    lng: 116.3989,
+    zoom: 12,
+    fromLanguages: ['es', 'fr'],
+    toLanguage: 'en',
     csrfToken: req.csrfToken()
   });
 });
@@ -67,7 +72,21 @@ app.post('/named', csrfProtection, (req, res) => {
 
 app.post('/overpass', csrfProtection, (req, res) => {
   // this query should return a string with OSM XML
-  request('http://overpass-api.de/api/interpreter?data=' + req.body.query.replace(/\s+/g, ''), (err, resp, body) => {
+  var query =
+    "node \
+      [place] \
+      [name] \
+      ['name:TARGETLANG'!~'.'] \
+      (SOUTH,WEST,NORTH,EAST); \
+    (._;>;); \
+    out;";
+  query = query.replace('NORTH', req.body.north);
+  query = query.replace('SOUTH', req.body.south);
+  query = query.replace('EAST', req.body.east);
+  query = query.replace('WEST', req.body.west);
+  query = query.replace('TARGETLANG', req.body.targetLang);
+
+  request('http://overpass-api.de/api/interpreter?data=' + query.replace(/\s+/g, ''), (err, resp, body) => {
     if (err) {
       console.log('Overpass API error');
       return res.json(err);

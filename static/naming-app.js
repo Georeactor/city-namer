@@ -12,13 +12,12 @@ $(function() {
     'district', 'province', 'region', 'state', 'country'];
 
   // language where labels are being added
-  var targetLang = 'en';
-  var altLangs = $.map(['es', 'fr', 'ar'], function (altLang) {
+  var altLangs = $.map(fromLanguages, function (altLang) {
     return 'tag[k="name:' + altLang + '"]';
   }).join(', ');
 
   // set up Leaflet map
-  var map = L.map('map').setView([39.8985, 116.3989], 12);
+  var map = L.map('map').setView(view.slice(0, 2), view[2]);
   map.attributionControl.setPrefix('');
   L.tileLayer('//tile-{s}.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
@@ -41,16 +40,6 @@ $(function() {
   });
   */
 
-  // template for OSM Overpass query
-  var query =
-    "node \
-      [place] \
-      [name] \
-      ['name:TARGETLANG'!~'.'] \
-      (SOUTH,WEST,NORTH,EAST); \
-    (._;>;); \
-    out;";
-
   function makeQuery() {
     // makeQuery runs on startup and map dragend
 
@@ -67,17 +56,18 @@ $(function() {
 
     // read the boundary into the Overpass API template
     var bbox = map.getBounds();
-    var customQuery = query.replace('NORTH', bbox.getNorthEast().lat.toFixed(6))
-      .replace('SOUTH', bbox.getSouthWest().lat.toFixed(6))
-      .replace('EAST', bbox.getNorthEast().lng.toFixed(6))
-      .replace('WEST', bbox.getSouthWest().lng.toFixed(6))
-      .replace('TARGETLANG', targetLang);
+    var customQuery = {
+      north: bbox.getNorthEast().lat.toFixed(6),
+      south: bbox.getSouthWest().lat.toFixed(6),
+      east: bbox.getNorthEast().lng.toFixed(6),
+      west: bbox.getSouthWest().lng.toFixed(6),
+      fromLanguages: fromLanguages,
+      targetLang: targetLang,
+      _csrf: $('#csrf').val()
+    };
 
     // POST to server, which makes actual API call
-    $.post('/overpass', {
-      _csrf: $('#csrf').val(),
-      query: customQuery
-    }, function(data) {
+    $.post('/overpass', customQuery, function(data) {
       // response contains OSM XML place nodes
       var pts = $(data).find('node');
 
@@ -152,7 +142,7 @@ $(function() {
     // search for names in alternate languages
     var altname = place.find(altLangs);
     if (altname.length) {
-      altname = altname.get(0).attr('v');
+      altname = $(altname.get(0)).attr('v');
     } else {
       altname = '';
     }

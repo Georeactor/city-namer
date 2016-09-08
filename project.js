@@ -69,7 +69,17 @@ function projectSetup(app, csrfProtection) {
 
   app.get('/projects/:id', csrfProtection, (req, res) => {
     Project.findById(req.params.id, (err, project) => {
-      res.json(err || project);
+      if (err) {
+        return res.json(err);
+      }
+      res.render('naming', {
+        lat: project.lat,
+        lng: project.lng,
+        zoom: project.zoom,
+        fromLanguages: project.fromLanguages,
+        toLanguage: project.toLanguage,
+        csrfToken: req.csrfToken()
+      });
     });
   });
 }
