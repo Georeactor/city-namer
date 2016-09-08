@@ -41,8 +41,11 @@ const csrfProtection = csrf({ cookie: true });
 // user registration and management
 require('./login')(app, csrfProtection);
 
-// official task manager / projects interface
+// task manager / projects interface
 require('./project')(app, csrfProtection);
+
+// Facebook Messenger bot interface
+require('./bot')(app, csrfProtection);
 
 // homepage for testing
 app.get('/', (req, res) => {
