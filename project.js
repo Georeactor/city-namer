@@ -11,12 +11,14 @@ function projectSetup(app, csrfProtection) {
       writeLanguages = req.user.writeLanguages;
     }
 
+/*
     if (readLanguages) {
       query = query.find({ fromLanguages: { $in: readLanguages } });
     }
     if (writeLanguages) {
       query = query.find({ toLanguage: { $in: writeLanguages } });
     }
+    */
 
     query.exec( (err, projects) => {
       if (err) {
