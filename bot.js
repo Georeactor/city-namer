@@ -1,14 +1,80 @@
 const request = require('request');
+const cheerio = require('cheerio');
 
 const FBUser = require('./models/fb-user');
 const Place = require('./models/place');
 
-function sendTextMessage(sender, messageData) {
-  if (messageData.length) {
-    messageData = {
-      text: messageData
-    };
+/*
+// activate test
+sendLabelTo({
+  readLanguages: ['en'],
+  writeLanguages: ['ne']
+});
+*/
+
+function sendLabelTo(user) {
+  function sendPlaceName(placeName) {
+    sendReply(user.user_id, { text: placeName });
   }
+
+  function checkOverpass(north, south, east, west, targetLang) {
+    var query =
+      "node \
+        [place] \
+        [name] \
+        ['name:TARGETLANG'!~'.'] \
+        (SOUTH,WEST,NORTH,EAST); \
+      (._;>;); \
+      out;";
+    query = query.replace('NORTH', north);
+    query = query.replace('SOUTH', south);
+    query = query.replace('EAST', east);
+    query = query.replace('WEST', west);
+    query = query.replace('TARGETLANG', targetLang);
+
+    request('http://overpass-api.de/api/interpreter?data=' + query.replace(/\s+/g, ''), (err, resp, body) => {
+      if (err) {
+        return console.log('Overpass API error' + JSON.stringify(err));
+      }
+
+      var $ = cheerio.load(body);
+      var pts = $('node');
+      var pt = $(pts.get(Math.floor(Math.random() * pts.length)));
+      var osm_place_id = pt.attr('id');
+      var name = pt.find('tag[k="name"]').attr('v');
+
+      user.lastPlace = [osm_place_id, targetLang, name].join('___');
+      user.save((err) => {
+        if (err) {
+          return console.log(err);
+        }
+        sendPlaceName(name);
+      });
+    });
+  }
+
+  if (user.readLanguages.indexOf('en') > -1) {
+    if (user.writeLanguages.indexOf('ne') > -1) {
+      // translate English -> Nepali in KTM
+      checkOverpass(27.7441, 27.6900, 85.3718, 85.2948, 'ne');
+    } else if (user.writeLanguages.indexOf('zh') > -1) {
+      // translate English -> Chinese in Boston
+      checkOverpass(42.6244, 42.3235, -70.6840, -71.3912, 'zh');
+    }
+  } else if (user.readLanguages.indexOf('zh') > -1) {
+    if (user.writeLanguages.indexOf('en') > -1) {
+      // translate Chinese -> English in Beijing
+      checkOverpass(40.1639, 39.7919, 116.7115, 116.1828, 'en');
+    }
+  } else if (user.readLanguages.indexOf('ne') > -1) {
+    if (user.writeLanguages.indexOf('en') > -1) {
+      // translate Nepali -> English in KTM
+      checkOverpass(27.7441, 27.6900, 85.3718, 85.2948, 'en');
+    }
+  }
+}
+
+function sendReply(sender, messageData) {
   request({
     url: 'https://graph.facebook.com/v2.6/me/messages',
     qs: {
@@ -37,7 +103,7 @@ function sendLanguageChoiceMessage (sender, options) {
       payload: {
         template_type: 'generic',
         elements: [{
-          title: 'Which map can you translate?',
+          title: 'Which maps can you translate?',
           buttons: [{
             type: 'postback',
             title: 'English -to-> नेपाली',
@@ -57,7 +123,7 @@ function sendLanguageChoiceMessage (sender, options) {
       }
     }
   };
-  sendTextMessage(sender, messageData);
+  sendReply(sender, messageData);
 }
 
 function botSetup(app, csrfProtection) {
@@ -84,12 +150,48 @@ function botSetup(app, csrfProtection) {
           });
           user.save((err) => {
             console.log('FBUser Mongo error: ' + JSON.stringify(err));
-            sendTextMessage(sender, 'Welcome to OSM City Namer, an unofficial mapping project! I send you names of places and you can translate them.')
+            sendReply(sender, 'Welcome to OSM City Namer, an unofficial mapping project! I send you names of places and you can translate them.')
             sendLanguageChoiceMessage(sender, ['English', 'Nepali', 'Chinese']);
           });
+        } else if (event.postback) {
+          var code = event.postback.payload.split(':');
+          if (code.length === 3 && code[0] === 'rw') {
+            if (user.readLanguages.indexOf(code[1]) === -1) {
+              user.readLanguages.push(code[1]);
+            }
+            if (user.writeLanguages.indexOf(code[2]) === -1) {
+              user.writeLanguages.push(code[2]);
+            }
+            user.save((err) => {
+              if (err) {
+                return console.log(err);
+              }
+              sendLabelTo(user);
+            });
+          }
         } else if (event.message && event.message.text) {
           var text = event.message.text;
-          sendTextMessage(sender, 'Text received, echo: ' + text.substring(0, 100));
+          if (user.lastPlace) {
+            var lastPlace = user.lastPlace.split('___');
+            var p = new Place({
+              user_id: 'fb:' + user.user_id,
+              osm_place_id: user.lastPlace[0],
+              name: user.lastPlace[2],
+              suggested: text.trim(),
+              language: user.lastPlace[1],
+              saved: new Date()
+            });
+            p.save((err) => {
+              if (err) {
+                return console.log(err);
+              }
+              sendLabelTo(user);
+            });
+          } else {
+            sendReply(sender, {
+              text: 'Text received, echo: ' + text.substring(0, 100)
+            });
+          }
         }
       });
     }

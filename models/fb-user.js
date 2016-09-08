@@ -6,7 +6,8 @@ const fbUserSchema = mongoose.Schema({
   name: String,
   preferLanguage: String,
   readLanguages: [String],
-  writeLanguages: [String]
+  writeLanguages: [String],
+  lastPlace: String
 });
 
 module.exports = mongoose.model('FBUser', fbUserSchema);
