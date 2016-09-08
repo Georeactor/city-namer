@@ -7,6 +7,8 @@ html
     link(rel="stylesheet", href="/lib/bootstrap.min.css")
     link(rel="stylesheet", href="/custom.css")
   body
+    script window.fbAsyncInit = function() { FB.init({ appId: "264974053901120", xfbml: true, version: "v2.6" }); }; (function(d, s, id){ var js, fjs = d.getElementsByTagName(s)[0]; if (d.getElementById(id)) { return; } js = d.createElement(s); js.id = id; js.src = "//connect.facebook.net/en_US/sdk.js"; fjs.parentNode.insertBefore(js, fjs); }(document, 'script', 'facebook-jssdk'));
+
     .container
       .row
         .col-sm-12
@@ -21,6 +23,7 @@ html
               a.btn.btn-default.btn-lg(href="/projects") View Projects
             else
               a.btn.btn-default.btn-lg(href="/login") Log In with OpenStreetMap
+            .fb-messengermessageus(messenger_app_id="264974053901120", page_id="1776010449340763", color="blue", size="large")
             hr
       .row
         .col-sm-6

@@ -2,6 +2,11 @@
   text-align: center;
 }
 
+.fb-messengermessageus {
+  margin-left: 20px;
+  vertical-align: middle;
+}
+
 #map {
   width: 100%;
   min-height: 100px;
@@ -42,5 +47,10 @@
 @media (max-width: 900px) {
   .mobile-only {
     display: inline;
+  }
+
+  .fb-messengermessageus {
+    margin-left: 0;
+    margin-top: 9px;
   }
 }
