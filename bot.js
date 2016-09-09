@@ -66,6 +66,11 @@ function sendLabelTo(user) {
       // translate Chinese -> English in Beijing
       checkOverpass(40.1639, 39.7919, 116.7115, 116.1828, 'en');
     }
+  } else if (user.readLanguages.indexOf('ja') > -1) {
+    if (user.writeLanguages.indexOf('en') > -1) {
+      // translate Japanese -> English in Tokyo
+      checkOverpass(35.8076129, 35.642343, 139.8821983, 139.6135868, 'en');
+    }
   } else if (user.readLanguages.indexOf('ne') > -1) {
     if (user.writeLanguages.indexOf('en') > -1) {
       // translate Nepali -> English in KTM
@@ -111,8 +116,8 @@ function sendLanguageChoiceMessage (sender, options) {
           },
           {
             type: 'postback',
-            title: 'English -to-> 中文',
-            payload: 'rw:en:zh'
+            title: '日本語 -to-> English',
+            payload: 'rw:ja:en'
           },
           {
             type: 'postback',
