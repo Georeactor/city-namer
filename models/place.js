@@ -6,7 +6,8 @@ const placeSchema = mongoose.Schema({
   suggested: String,
   language: String,
   saved: Date,
-  submitted: Date
+  submitted: Date,
+  user_id: String
 });
 
 module.exports = mongoose.model('Place', placeSchema);

@@ -31,10 +31,22 @@ html
           p Remote and foreign mappers mean well, but may use their own languages to label and define OpenStreetMap's placenames around the world.
           p When viewing a region in the project-mapper, larger cities and placenames are translated before smaller towns and neighborhoods.
           p This method can also be used to promote minority languages and create maps in different scripts.
-        .col-sm-6
           h4 Adding alternate placenames
           p As OpenStreetMap is used in professional, commercial, and emergency situations, it's important to have the map labels be legible by users from all over the world.
           p 
+        .col-sm-6
+          h4 Leaderboard
+          p All edits are currently unverified (not added to OSM)
+          table
+            tr
+              td Name
+              td Submitted
+              td Verified
+            for leader in leaders
+              tr
+                td #{leader.name}
+                td #{leader.count}
+                td N/A
       .row
         .col-sm-6
           h4 Getting Involved

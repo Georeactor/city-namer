@@ -15,6 +15,9 @@ const request = require('request');
 
 // my MongoDB data
 const Suggestion = require('./models/suggestion');
+const Place = require('./models/place');
+const User = require('./models/user');
+const FBUser = require('./models/fb-user');
 
 console.log('Connecting to MongoDB (required)');
 mongoose.connect(process.env.MONGOLAB_URI || process.env.MONGODB_URI || 'localhost');
@@ -49,8 +52,22 @@ require('./bot')(app, csrfProtection);
 
 // homepage for testing
 app.get('/', (req, res) => {
-  res.render('index', {
-    user: req.user
+  Place.aggregate({ $group: { _id: "$user_id", count: { $sum: 1 } } }).exec(err, results) =>
+    var leaders = [];
+    results = results.sort((a, b) => {
+      return a.count - b.count;
+    });
+    results.map((result) => {
+      leaders.push({
+        name: result._id,
+        count: result.count
+      });
+    });
+
+    res.render('index', {
+      user: req.user,
+      leaders: leaders
+    });
   });
 });
 
