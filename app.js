@@ -52,9 +52,9 @@ require('./bot')(app, csrfProtection);
 
 // homepage for testing
 app.get('/', (req, res) => {
-  Place.aggregate({ $group: { _id: "$user_id", count: { $sum: 1 } } }).exec(err, results) =>
+  Place.aggregate({ $group: { _id: "$user_id", count: { $sum: 1 } } }).exec((err, results) => {
     var leaders = [];
-    results = results.sort((a, b) => {
+    results.sort((a, b) => {
       return a.count - b.count;
     });
     results.map((result) => {
@@ -127,6 +127,18 @@ app.post('/name', csrfProtection, (req, res) => {
   });
   p.save((err) => {
     return res.json(err || { status: 'success', _id: p._id });
+  });
+});
+
+app.get('/verify', (req, res) => {
+  // temporary data check for whether we are ready to verify suggestions
+  Place.aggregate({ $group: { _id: "$osm_place_id", count: { $sum: 1 } } }).exec((err, results) => {
+    if (results && results.length) {
+      results.sort((a, b) => {
+        return a.count - b.count;
+      });
+    }
+    res.json(err || results);
   });
 });
 
