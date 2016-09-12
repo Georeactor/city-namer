@@ -2,7 +2,7 @@ const request = require('request');
 const cheerio = require('cheerio');
 
 const FBUser = require('./models/fb-user');
-const Place = require('./models/place');
+const Suggestion = require('./models/suggestion');
 
 /*
 // activate test
@@ -155,7 +155,9 @@ function botSetup(app, csrfProtection) {
           });
           user.save((err) => {
             console.log('FBUser Mongo error: ' + JSON.stringify(err));
-            sendReply(sender, 'Welcome to OSM City Namer, an unofficial mapping project! I send you names of places and you can translate them.')
+            sendReply(sender, {
+              text: 'Welcome to OSM City Namer, an unofficial mapping project! I send you names of places and you can translate them.'
+            });
             sendLanguageChoiceMessage(sender, ['English', 'Nepali', 'Chinese']);
           });
         } else if (event.postback) {
@@ -178,15 +180,37 @@ function botSetup(app, csrfProtection) {
           var text = event.message.text;
           if (user.lastPlace) {
             var lastPlace = user.lastPlace.split('___');
-            var p = new Place({
+            var p = new Suggestion({
               user_id: 'fb:' + user.user_id,
               osm_place_id: user.lastPlace[0],
-              name: user.lastPlace[2],
+              originalName: user.lastPlace[2],
               suggested: text.trim(),
-              language: user.lastPlace[1],
+              targetLanguage: user.lastPlace[1],
               saved: new Date()
             });
             p.save((err) => {
+              if (err) {
+                return console.log(err);
+              }
+              if (user.name) {
+                sendLabelTo(user);
+              } else {
+                user.lastPlace = '';
+                user.name = 'set-me-plz';
+                user.save((err) => {
+                  if (err) {
+                    return console.log(err);
+                  }
+                  sendReply(sender, {
+                    text: 'Thanks! What name would you like to have on the leaderboard?'
+                  });
+                });
+              }
+            });
+          } else if (user.name === 'set-me-plz') {
+            // sets name for leaderboard
+            user.name = text.trim();
+            user.save((err) => {
               if (err) {
                 return console.log(err);
               }

@@ -14,7 +14,7 @@ const csrf = require('csurf');
 const request = require('request');
 
 // my MongoDB data
-const Place = require('./models/place');
+const Suggestion = require('./models/suggestion');
 
 console.log('Connecting to MongoDB (required)');
 mongoose.connect(process.env.MONGOLAB_URI || process.env.MONGODB_URI || 'localhost');
@@ -68,11 +68,13 @@ app.get('/app', csrfProtection, (req, res) => {
 });
 
 // JSON to check which places are already named in the database
+/*
 app.post('/named', csrfProtection, (req, res) => {
   Place.find({ osm_id: { $in: req.body.osm_ids } }).select('osm_id').exec((err, places) => {
     return res.json(err || places);
   });
 });
+*/
 
 app.post('/overpass', csrfProtection, (req, res) => {
   // this query should return a string with OSM XML
@@ -104,24 +106,18 @@ app.post('/name', csrfProtection, (req, res) => {
   if (!req.user) {
     return res.redirect('/login');
   }
-  var p = new Place({
+
+  var p = new Suggestion({
     user_id: req.user._id,
     osm_user_id: req.user.osm_id,
     osm_place_id: req.body.osm_place_id,
-    name: req.body.name,
+    originalName: req.body.name,
     suggested: req.body.suggested,
-    language: req.body.language,
+    targetLanguage: req.body.language,
     saved: new Date()
   });
   p.save((err) => {
     return res.json(err || { status: 'success', _id: p._id });
-  });
-});
-
-// browse to verify everything makes sense
-app.get('/names', csrfProtection, (req, res) => {
-  Place.find({}).sort('-saved').limit(10).exec( (err, places) => {
-    return res.json(err || places);
   });
 });
 
