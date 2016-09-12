@@ -6,7 +6,7 @@ const placeSchema = mongoose.Schema({
   suggested: String,
   language: String,
   saved: Date,
-  submitted: Date,
+  submitted: Number,
   user_id: String
 });
 

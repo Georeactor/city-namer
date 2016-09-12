@@ -52,7 +52,11 @@ require('./bot')(app, csrfProtection);
 
 // homepage for testing
 app.get('/', (req, res) => {
-  Place.aggregate({ $group: { _id: "$user_id", count: { $sum: 1 } } }).exec((err, results) => {
+  Place.aggregate({ $group: {
+    _id: '$user_id',
+    count: { $sum: 1 },
+    verified: { $sum: '$submitted' }
+  }}).exec((err, results) => {
     var leaders = [];
     results.sort((a, b) => {
       return a.count - b.count;
@@ -60,7 +64,8 @@ app.get('/', (req, res) => {
     results.map((result) => {
       leaders.push({
         name: result._id,
-        count: result.count
+        count: result.count,
+        verified: result.verified
       });
     });
 
