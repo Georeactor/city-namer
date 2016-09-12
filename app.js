@@ -11,7 +11,7 @@ const mongoose = require('mongoose');
 const csrf = require('csurf');
 
 // querying Overpass
-const request = require('request');
+const checkForNameless = require('check-for-nameless');
 
 // my MongoDB data
 const Suggestion = require('./models/suggestion');
@@ -95,21 +95,13 @@ app.post('/named', csrfProtection, (req, res) => {
 
 app.post('/overpass', csrfProtection, (req, res) => {
   // this query should return a string with OSM XML
-  var query =
-    "node \
-      [place] \
-      [name] \
-      ['name:TARGETLANG'!~'.'] \
-      (SOUTH,WEST,NORTH,EAST); \
-    (._;>;); \
-    out;";
-  query = query.replace('NORTH', req.body.north);
-  query = query.replace('SOUTH', req.body.south);
-  query = query.replace('EAST', req.body.east);
-  query = query.replace('WEST', req.body.west);
-  query = query.replace('TARGETLANG', req.body.targetLang);
-
-  request('http://overpass-api.de/api/interpreter?data=' + query.replace(/\s+/g, ''), (err, resp, body) => {
+  checkForNameless({
+    north: req.body.north,
+    south: req.body.south,
+    east: req.body.east,
+    west: req.body.west,
+    targetLang: req.body.targetLang
+  }, (err, body) =>
     if (err) {
       console.log('Overpass API error');
       return res.json(err);

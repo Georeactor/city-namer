@@ -1,5 +1,6 @@
-const request = require('request');
 const cheerio = require('cheerio');
+const request = require('request');
+const checkForNameless = require('check-for-nameless');
 
 const FBUser = require('./models/fb-user');
 const Suggestion = require('./models/suggestion');
@@ -18,21 +19,7 @@ function sendLabelTo(user) {
   }
 
   function checkOverpass(north, south, east, west, targetLang) {
-    var query =
-      "node \
-        [place] \
-        [name] \
-        ['name:TARGETLANG'!~'.'] \
-        (SOUTH,WEST,NORTH,EAST); \
-      (._;>;); \
-      out;";
-    query = query.replace('NORTH', north);
-    query = query.replace('SOUTH', south);
-    query = query.replace('EAST', east);
-    query = query.replace('WEST', west);
-    query = query.replace('TARGETLANG', targetLang);
-
-    request('http://overpass-api.de/api/interpreter?data=' + query.replace(/\s+/g, ''), (err, resp, body) => {
+    checkForNameless({ north: north, south: south, east: east, west: west, targetLang: targetLang }, (err, body) => {
       if (err) {
         return console.log('Overpass API error' + JSON.stringify(err));
       }
