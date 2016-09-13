@@ -58,12 +58,12 @@ app.get('/', (req, res) => {
     verified: { $sum: '$submitted' }
   }}).exec((err, results) => {
     var leaders = [];
-    results.sort((a, b) => {
-      return a.count - b.count;
+    results = results.sort((a, b) => {
+      return b.count - a.count;
     });
     results.map((result) => {
       leaders.push({
-        name: result._id,
+        name: result._id.slice(5, 6),
         count: result.count,
         verified: result.verified
       });
@@ -71,7 +71,7 @@ app.get('/', (req, res) => {
 
     res.render('index', {
       user: req.user,
-      leaders: leaders
+      leaders: leaders.slice(0, 4)
     });
   });
 });
@@ -106,7 +106,7 @@ app.post('/overpass', csrfProtection, (req, res) => {
     east: req.body.east,
     west: req.body.west,
     targetLang: req.body.targetLang
-  }, (err, body) =>
+  }, (err, body) => {
     if (err) {
       console.log('Overpass API error');
       return res.json(err);
