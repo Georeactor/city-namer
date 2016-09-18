@@ -17,10 +17,12 @@ function userSetup(app, csrfProtection) {
         callbackURL: "http://names.georeactor.com/auth/openstreetmap/callback"
       }, (token, tokenSecret, profile, done) => {
         var osm_user_name = profile._xml2js.user['@'].display_name;
-        console.log(osm_user_name);
         User.find({ osm_id: osm_user_name }, (err, user) => {
           if (err) {
             return done(err, null);
+          }
+          if (user) {
+            return done(err, user);
           }
           var u = new User({
             osm_id: osm_user_name,
