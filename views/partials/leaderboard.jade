@@ -1,0 +1,10 @@
+table.table.table-striped
+  tr
+    td Name
+    td Suggested
+    td Verified
+  for leader in leaders
+    tr
+      td #{leader.name}
+      td #{leader.count}
+      td #{leader.verified}

@@ -7,7 +7,7 @@ html
     link(rel="stylesheet", href="/lib/bootstrap.min.css")
     link(rel="stylesheet", href="/custom.css")
   body
-    script window.fbAsyncInit = function() { FB.init({ appId: "264974053901120", xfbml: true, version: "v2.6" }); }; (function(d, s, id){ var js, fjs = d.getElementsByTagName(s)[0]; if (d.getElementById(id)) { return; } js = d.createElement(s); js.id = id; js.src = "//connect.facebook.net/en_US/sdk.js"; fjs.parentNode.insertBefore(js, fjs); }(document, 'script', 'facebook-jssdk'));
+    include partials/messageus
 
     .container
       .row
@@ -39,16 +39,7 @@ html
         .col-sm-6
           h4 Leaderboard
           p All edits are currently unverified (not added to OSM)
-          table.table.table-striped
-            tr
-              td Name
-              td Suggested
-              td Verified
-            for leader in leaders
-              tr
-                td #{leader.name}
-                td #{leader.count}
-                td #{leader.verified}
+          include partials/leaderboard
       .row
         .col-sm-6
           h4 Getting Involved

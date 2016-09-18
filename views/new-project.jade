@@ -43,18 +43,12 @@ html
               .form-group
                 label Translate FROM these languages:
                 select.select2.form-control.input-lg.language-select(multiple="multiple", name="fromLanguages")
-                  option(value="en") English
-                  option(value="es") Spanish
-                  option(value="fr") French
-                  option(value="ne") Nepali
+                  include partials/languages
               
               .form-group
                 label Translate TO this language:
                 select.form-control.input-lg(name="toLanguage")
-                  option(value="en") English
-                  option(value="es") Spanish
-                  option(value="fr") French
-                  option(value="ne") Nepali
+                  include partials/languages
                 
               .form-group
                 label Additional directions

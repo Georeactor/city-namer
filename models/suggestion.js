@@ -6,6 +6,7 @@ const suggestionSchema = mongoose.Schema({
   osm_place_id: String,
   originalName: String,
   suggested: String,
+  submitted: Number,
   targetLanguage: String,
   saved: Date,
   test: Boolean
