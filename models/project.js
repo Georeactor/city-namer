@@ -9,7 +9,8 @@ const projectSchema = mongoose.Schema({
   saved: Date,
   lat: Number,
   lng: Number,
-  zoom: Number
+  zoom: Number,
+  test: Boolean
 });
 
 module.exports = mongoose.model('Project', projectSchema);

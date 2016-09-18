@@ -6,7 +6,8 @@ const userSchema = mongoose.Schema({
   name: String,
   preferLanguage: String,
   readLanguages: [String],
-  writeLanguages: [String]
+  writeLanguages: [String],
+  test: Boolean
 });
 
 module.exports = mongoose.model('User', userSchema);

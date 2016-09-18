@@ -7,7 +7,8 @@ const suggestionSchema = mongoose.Schema({
   originalName: String,
   suggested: String,
   targetLanguage: String,
-  saved: Date
+  saved: Date,
+  test: Boolean
 });
 
 module.exports = mongoose.model('Suggestion', suggestionSchema);

@@ -2,6 +2,9 @@ const assert = require('chai').assert;
 const request = require('supertest');
 
 const app = require('../app');
+const common = require('./common');
+
+const Project = require('../models/project');
 
 describe('logged out', () => {
   it('returns homepage with login button', (done) => {
@@ -10,27 +13,27 @@ describe('logged out', () => {
       .expect(200)
       .end((err, res) => {
         if (err) {
-          return done(err);
+          return common.clear(done, () => { done(err); });
         }
         assert.include(res.text, 'Log In');
-        done();
+        common.clear(done, done);
       });
   });
 
   it('returns a project list', (done) => {
-    // TODO: create a test project
-
-    request(app)
-      .get('/projects')
-      .expect(200)
-      .end((err, res) => {
-        if (err) {
-          return done(err);
-        }
-        assert.include(res.text, 'en');
-        assert.notInclude(res.text, 'Create a new project');
-        done();
-      });
+    common.make.Project(done, () => {
+      request(app)
+        .get('/projects')
+        .expect(200)
+        .end((err, res) => {
+          if (err) {
+            return common.clear(done, () => { done(err); });
+          }
+          assert.match(res.text, /zh, ne.*rarr;.*en/);
+          assert.notInclude(res.text, 'Create a new project');
+          common.clear(done, done);
+        });
+    });
   });
 
   it('redirects /projects/new to /login', (done) => {
@@ -39,14 +42,16 @@ describe('logged out', () => {
       .expect(302)
       .end((err, res) => {
         if (err) {
-          return done(err);
+          return common.clear(done, () => { done(err); });
         }
         assert.include(res.text, 'Redirecting to /login')
-        done();
+        common.clear(done, done);
       });
   });
 });
 
 describe('logged in', () => {
+  const agent = request.agent(app);
+
 
 });
