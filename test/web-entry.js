@@ -53,5 +53,17 @@ describe('logged out', () => {
 describe('logged in', () => {
   const agent = request.agent(app);
 
-
+  it('returns homepage with logout button', (done) => {
+    request(app)
+      .get('/')
+      .expect(200)
+      .end((err, res) => {
+        if (err) {
+          return common.clear(done, () => { done(err); });
+        }
+        assert.include(res.text, 'View Projects');
+        assert.include(res.text, 'Log Out');
+        common.clear(done, done);
+      });
+  });
 });

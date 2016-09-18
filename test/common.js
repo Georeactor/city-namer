@@ -23,14 +23,50 @@ const make = {
       saved: new Date(),
       lat: 0,
       lng: 0,
-      zoom: 10,
-      test: Boolean
+      zoom: 10
     });
     p.save((err) => {
       if (err) {
         return clear(done, () => { done(err); });
       }
       callback(p);
+    });
+  },
+
+  Suggestion: (user, done, callback) => {
+    var s = new Suggestion({
+      test: true,
+      user_id: user._id,
+      osm_user_id: user.osm_id,
+      osm_place_id: '1',
+      originalName: 'ABC',
+      suggested: 'TestTest',
+      targetLanguage: 'en',
+      saved: new Date()
+    });
+    s.save((err) => {
+      if (err) {
+        return clear(done, () => { done(err); });
+      }
+      callback(s);
+    });
+  },
+
+  User: (done, callback) => {
+    var u = new User({
+      test: true,
+      user_id: 'mapmeld',
+      osm_id: 'mapmeld',
+      name: 'Test',
+      preferLanguage: 'English',
+      readLanguages: ['en'],
+      writeLanguages: ['en'],
+    });
+    u.save((err) => {
+      if (err) {
+        return clear(done, () => { done(err); });
+      }
+      callback(u);
     });
   }
 };
