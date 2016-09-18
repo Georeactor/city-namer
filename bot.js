@@ -5,14 +5,6 @@ const checkForNameless = require('check-for-nameless');
 const FBUser = require('./models/fb-user');
 const Suggestion = require('./models/suggestion');
 
-/*
-// activate test
-sendLabelTo({
-  readLanguages: ['en'],
-  writeLanguages: ['ne']
-});
-*/
-
 function sendLabelTo(user) {
   function sendPlaceName(placeName) {
     sendReply(user.user_id, { text: placeName });

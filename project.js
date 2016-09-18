@@ -10,6 +10,8 @@ const endlangs = {
   'zh': 'Chinese'
 };
 
+const hardcodedAdmins = ['mapmeld'];
+
 function projectSetup(app, csrfProtection) {
   app.get('/projects', csrfProtection, (req, res) => {
     var query = Project.find({}).sort('-saved');
@@ -41,6 +43,7 @@ function projectSetup(app, csrfProtection) {
 
       res.render('projects', {
         user: req.user,
+        isAdmin: (hardcodedAdmins.indexOf(req.user.osm_id) > -1),
         rows: rows
       });
     });
@@ -92,6 +95,24 @@ function projectSetup(app, csrfProtection) {
         endlang: endlangs[project.toLanguage],
         csrfToken: req.csrfToken()
       });
+    });
+  });
+
+  app.get('/projects/:id/delete', (req, res) => {
+    Project.findById(req.params.id, (err, project) => {
+      if (err) {
+        return res.json(err);
+      }
+      if (req.user && hardcodedAdmins.indexOf(req.user.osm_id) > -1) {
+        project.delete((err) => {
+          if (err) {
+            return res.json(err);
+          }
+          res.redirect('/projects');
+        });
+      } else {
+        res.json({ error: 'not valid admin' });
+      }
     });
   });
 }

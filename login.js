@@ -30,7 +30,7 @@ function userSetup(app, csrfProtection) {
         callbackURL: "http://names.georeactor.com/auth/openstreetmap/callback"
       }, (token, tokenSecret, profile, done) => {
         var osm_user_name = profile._xml2js.user['@'].display_name;
-        User.find({ osm_id: osm_user_name }, (err, user) => {
+        User.findOne({ osm_id: osm_user_name }, (err, user) => {
           if (err || user) {
             return done(err, user);
           }
@@ -97,6 +97,7 @@ function userSetup(app, csrfProtection) {
         if (err) {
           return res.json(err);
         }
+        req.user.name = u.name;
         res.redirect('/projects');
       });
     });
