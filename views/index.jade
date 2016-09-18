@@ -17,11 +17,13 @@ html
             span Adding placenames across OpenStreetMap
             br
             br
-            a.btn.btn-primary.btn-lg(href="/app") Demo App
-            span &nbsp;&nbsp;&nbsp;&nbsp;
             if user
-              a.btn.btn-default.btn-lg(href="/projects") View Projects
+              a.btn.btn-primary.btn-lg(href="/projects") View Projects
+              span &nbsp;&nbsp;&nbsp;&nbsp;
+              a.btn.btn-default.btn-lg(href="/logout") Log Out
             else
+              a.btn.btn-primary.btn-lg(href="/app") Demo App
+              span &nbsp;&nbsp;&nbsp;&nbsp;
               a.btn.btn-default.btn-lg(href="/login") Log In with OpenStreetMap
             .fb-messengermessageus(messenger_app_id="264974053901120", page_id="1776010449340763", color="blue", size="large")
             hr
@@ -33,7 +35,7 @@ html
           p This method can also be used to promote minority languages and create maps in different scripts.
           h4 Adding alternate placenames
           p As OpenStreetMap is used in professional, commercial, and emergency situations, it's important to have the map labels be legible by users from all over the world.
-          p 
+          p
         .col-sm-6
           h4 Leaderboard
           p All edits are currently unverified (not added to OSM)
@@ -54,4 +56,3 @@ html
             span Help write&nbsp;
             a(href="https://github.com/Georeactor/city-namer/") City-Namer
             span &nbsp; on GitHub.
-          

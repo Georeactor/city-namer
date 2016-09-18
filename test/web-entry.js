@@ -53,8 +53,23 @@ describe('logged out', () => {
 describe('logged in', () => {
   const agent = request.agent(app);
 
+  it('logs in', (done) => {
+    common.make.User(done, (u) => {
+      agent
+        .post('/auth/local')
+        .send({ username: 'mapmeld', password: 'test' })
+        .expect(302)
+        .end((err, res) => {
+          if (err) {
+            return common.clear(done, () => { done(err); });
+          }
+          common.clear(done, done);
+        });
+    });
+  });
+
   it('returns homepage with logout button', (done) => {
-    request(app)
+    agent
       .get('/')
       .expect(200)
       .end((err, res) => {

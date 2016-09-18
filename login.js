@@ -9,7 +9,20 @@ function userSetup(app, csrfProtection) {
   // Passport module setup
   app.use(passport.initialize());
   app.use(passport.session());
-  if (process.env.OPENSTREETMAP_CONSUMER_KEY && process.env.OPENSTREETMAP_CONSUMER_SECRET) {
+
+  if (typeof global.it === 'function') {
+    /* in a test */
+    passport.use(new LocalStrategy(
+      (username, password, done) => {
+        User.findOne({ osm_id: username, test: true }, function (err, user) {
+          if (err) { return done(err); }
+          if (!user) { return done(null, false); }
+          return done(null, user);
+        });
+      }
+    ));
+  }
+  else if (process.env.OPENSTREETMAP_CONSUMER_KEY && process.env.OPENSTREETMAP_CONSUMER_SECRET) {
     passport.use(
       new OpenStreetMapStrategy({
         consumerKey: process.env.OPENSTREETMAP_CONSUMER_KEY,
@@ -102,6 +115,15 @@ function userSetup(app, csrfProtection) {
         res.redirect('/projects');
       }
     });
+
+  // local oauth test
+  app.post('/auth/local', passport.authenticate('local', { failureRedirect: '/login?fail=true' }), (req, res) => {
+    if (req.user.name === 'unset') {
+      res.redirect('/register');
+    } else {
+      res.redirect('/projects');
+    }
+  });
 }
 
 module.exports = userSetup;
