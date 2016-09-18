@@ -43,7 +43,7 @@ function projectSetup(app, csrfProtection) {
 
       res.render('projects', {
         user: req.user,
-        isAdmin: (hardcodedAdmins.indexOf(req.user.osm_id) > -1),
+        isAdmin: (hardcodedAdmins.indexOf((req.user || {}).osm_id) > -1),
         rows: rows
       });
     });
