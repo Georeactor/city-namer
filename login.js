@@ -31,10 +31,7 @@ function userSetup(app, csrfProtection) {
       }, (token, tokenSecret, profile, done) => {
         var osm_user_name = profile._xml2js.user['@'].display_name;
         User.find({ osm_id: osm_user_name }, (err, user) => {
-          if (err) {
-            return done(err, null);
-          }
-          if (user) {
+          if (err || user) {
             return done(err, user);
           }
           var u = new User({
