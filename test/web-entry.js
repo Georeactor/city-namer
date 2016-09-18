@@ -68,7 +68,7 @@ describe('logged in', () => {
     });
   });
 
-  it('returns homepage with logout button', (done) => {
+  it('returns homepage with view projects / logout', (done) => {
     agent
       .get('/')
       .expect(200)
@@ -78,6 +78,35 @@ describe('logged in', () => {
         }
         assert.include(res.text, 'View Projects');
         assert.include(res.text, 'Log Out');
+        common.clear(done, done);
+      });
+  });
+
+  it('returns a project list', (done) => {
+    common.make.Project(done, () => {
+      agent
+        .get('/projects')
+        .expect(200)
+        .end((err, res) => {
+          if (err) {
+            return common.clear(done, () => { done(err); });
+          }
+          assert.match(res.text, /zh, ne.*rarr;.*en/);
+          assert.include(res.text, 'Create a new project');
+          common.clear(done, done);
+        });
+    });
+  });
+
+  it('shows a /projects/new form', (done) => {
+    agent
+      .get('/projects/new')
+      .expect(200)
+      .end((err, res) => {
+        if (err) {
+          return common.clear(done, () => { done(err); });
+        }
+        assert.include(res.text, 'Creating a City-Namer Project');
         common.clear(done, done);
       });
   });
