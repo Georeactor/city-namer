@@ -29,7 +29,7 @@ describe('logged out', () => {
           if (err) {
             return common.clear(done, () => { done(err); });
           }
-          assert.match(res.text, /zh, ne.*rarr;.*en/);
+          assert.match(res.text, /Chinese, Nepali.*rarr;.*English/);
           assert.notInclude(res.text, 'Create a new project');
           common.clear(done, done);
         });
@@ -91,7 +91,7 @@ describe('logged in', () => {
           if (err) {
             return common.clear(done, () => { done(err); });
           }
-          assert.match(res.text, /zh, ne.*rarr;.*en/);
+          assert.match(res.text, /Chinese, Nepali.*rarr;.*English/);
           assert.include(res.text, 'Create a new project');
           common.clear(done, done);
         });

@@ -10,10 +10,7 @@ const compression = require('compression');
 const mongoose = require('mongoose');
 const csrf = require('csurf');
 
-// querying Overpass
-const checkForNameless = require('check-for-nameless');
-
-// my MongoDB data
+// my MongoDB models
 const Suggestion = require('./models/suggestion');
 const Place = require('./models/place');
 const User = require('./models/user');
@@ -52,18 +49,21 @@ require('./bot')(app, csrfProtection);
 
 // homepage for testing
 app.get('/', (req, res) => {
+  // include data for leaderboard
   Suggestion.aggregate({ $group: {
     _id: '$user_id',
     count: { $sum: 1 },
     verified: { $sum: '$submitted' }
   }}).exec((err, results) => {
+
+    // leaderboard should shop top users (web and Facebook)
     var leaders = [];
-    results = results.sort((a, b) => {
+    results.sort((a, b) => {
       return b.count - a.count;
     });
     results.map((result) => {
       leaders.push({
-        name: (result.name || result._id.slice(0, 4)),
+        name: result._id,
         count: result.count,
         verified: result.verified
       });
@@ -73,45 +73,6 @@ app.get('/', (req, res) => {
       user: req.user,
       leaders: leaders.slice(0, 4)
     });
-  });
-});
-
-// map for naming
-app.get('/app', csrfProtection, (req, res) => {
-  res.render('naming', {
-    lat: 39.8985,
-    lng: 116.3989,
-    zoom: 12,
-    fromLanguages: ['es', 'fr'],
-    toLanguage: 'en',
-    endlang: 'English',
-    csrfToken: req.csrfToken()
-  });
-});
-
-// JSON to check which places are already named in the database
-/*
-app.post('/named', csrfProtection, (req, res) => {
-  Place.find({ osm_id: { $in: req.body.osm_ids } }).select('osm_id').exec((err, places) => {
-    return res.json(err || places);
-  });
-});
-*/
-
-app.post('/overpass', csrfProtection, (req, res) => {
-  // this query should return a string with OSM XML
-  checkForNameless({
-    north: req.body.north,
-    south: req.body.south,
-    east: req.body.east,
-    west: req.body.west,
-    targetLang: req.body.targetLang
-  }, (err, body) => {
-    if (err) {
-      console.log('Overpass API error');
-      return res.json(err);
-    }
-    res.send(body);
   });
 });
 
@@ -131,12 +92,13 @@ app.post('/name', csrfProtection, (req, res) => {
     saved: new Date()
   });
   p.save((err) => {
+    // TODO: check for three confirmations on the Place
     return res.json(err || { status: 'success', _id: p._id });
   });
 });
 
 app.get('/verify', (req, res) => {
-  // temporary data check for whether we are ready to verify suggestions
+  // temporary data check for whether we are ready to verify any Suggestions
   Place.aggregate({ $group: { _id: "$osm_place_id", count: { $sum: 1 } } }).exec((err, results) => {
     if (results && results.length) {
       results.sort((a, b) => {

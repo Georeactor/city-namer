@@ -6,11 +6,6 @@ $(function() {
   // list of already-solved OSM ids
   var solved = [];
 
-  // order of importance for a place=___ tag (translate a country before a state before a city)
-  var placeRelevance = ['hamlet', 'village', 'town', 'plot', 'city_block', 'neighborhood',
-    'neighbourhood', 'quarter', 'island', 'suburb', 'borough', 'city', 'municipality', 'county',
-    'district', 'province', 'region', 'state', 'country'];
-
   // language where labels are being added
   var altLangs = $.map(fromLanguages, function (altLang) {
     return 'tag[k="name:' + altLang + '"]';
@@ -28,17 +23,6 @@ $(function() {
   if (L.Hash) {
     new L.Hash(map);
   }
-
-  // reload place data after the map is moved by user
-  /*
-  var moveTimeout = null;
-  map.on('dragend', function() {
-    if (moveTimeout) {
-      clearTimeout(moveTimeout);
-    }
-    moveTimeout = setTimeout(makeQuery, 1000);
-  });
-  */
 
   function makeQuery() {
     // makeQuery runs on startup and map dragend
@@ -67,17 +51,7 @@ $(function() {
     };
 
     // POST to server, which makes actual API call
-    $.post('/overpass', customQuery, function(data) {
-      // response contains OSM XML place nodes
-      var pts = $(data).find('node');
-
-      // sort points by importance of place=___ tag
-      pts.sort(function (a, b) {
-        var aplace = $(a).find('tag[k="place"]').attr("v");
-        var bplace = $(b).find('tag[k="place"]').attr("v");
-        return placeRelevance.indexOf(bplace) - placeRelevance.indexOf(aplace);
-      });
-
+    $.post('/overpass', customQuery, function(pts) {
       $.each(pts, function (p, pt) {
         var pt = $(pt);
 
