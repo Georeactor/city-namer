@@ -25,22 +25,45 @@ html
               span &nbsp;&nbsp;&nbsp;&nbsp;
               a.btn.btn-default.btn-lg(href="/login") Sign Up
             hr
-      for row in rows
+      .row.projects-filter
+        .col-sm-4
+          h4 Filter Projects:
+        .col-sm-4
+          h4 Read Languages
+          input#readLanguageVals(type="hidden", value="#{readLanguages.join(',')}")
+          a.btn.btn-default(href='/projects?readLanguages=all&writeLanguages=#{writeLanguages.join(",")}') All
+          select#readLanguage.form-control
+            include partials/languages
+        .col-sm-4
+          h4 Write Languages
+          input#writeLanguageVals(type="hidden", value="#{writeLanguages.join(',')}")
+          a.btn.btn-default(href='/projects?readLanguages=#{readLanguages.join(",")}&writeLanguages=all') All
+          select#writeLanguage.form-control
+            include partials/languages
+      hr
+
+      if projectCount > 0
+        for row in rows
+          .row
+            for project in row
+              .col-sm-4
+                .project
+                  a(href="/projects/#{project._id}")
+                    img(src="//api.mapbox.com/styles/v1/mapbox/streets-v9/static/#{project.lng},#{project.lat},7/300x300?access_token=pk.eyJ1IjoidGhlLWFzaWEtZm91bmRhdGlvbiIsImEiOiJpODl0Xy00In0.on3pFdtDeQSAC04tryO_hA")
+                    h4= project.title
+                  small #{project.fromLanguages.map((langcode) => { return endlangs[langcode]; }).join(', ')}
+                  strong &nbsp;&nbsp;&rarr;&nbsp;&nbsp;
+                  small #{endlangs[project.toLanguage]}
+                  if isAdmin
+                    br
+                    a.btn.btn-danger(href="/projects/#{project._id}/delete") Delete
+                    br
+                    br
+      else
         .row
-          for project in row
-            .col-sm-4
-              .project
-                a(href="/projects/#{project._id}")
-                  img(src="//api.mapbox.com/styles/v1/mapbox/streets-v9/static/#{project.lng},#{project.lat},7/300x300?access_token=pk.eyJ1IjoidGhlLWFzaWEtZm91bmRhdGlvbiIsImEiOiJpODl0Xy00In0.on3pFdtDeQSAC04tryO_hA")
-                  h4= project.title
-                small #{project.fromLanguages.map((langcode) => { return endlangs[langcode]; }).join(', ')}
-                strong &nbsp;&nbsp;&rarr;&nbsp;&nbsp;
-                small #{endlangs[project.toLanguage]}
-                if isAdmin
-                  br
-                  a.btn.btn-danger(href="/projects/#{project._id}/delete") Delete
-                  br
-                  br
+          .col-sm-12
+            h4 No Projects Found
+            p There are no projects found for your language group. Try using the search selectors above.
       if user
         hr
         .row
@@ -50,3 +73,5 @@ html
       br
       br
       br
+    script(src="/lib/jquery-1.12.1.min.js")
+    script(src='/projects-filter.js')

@@ -45,6 +45,12 @@
   display: none;
 }
 
+#readLanguage.form-control, #writeLanguage.form-control {
+  max-width: 50%;
+  display: inline-block;
+  margin-left: 20%;
+}
+
 @media (max-width: 900px) {
   .mobile-only {
     display: inline;

@@ -57,7 +57,7 @@ describe('logged in', () => {
     common.make.User(done, (u) => {
       agent
         .post('/auth/local')
-        .send({ username: 'mapmeld', password: 'test' })
+        .send({ username: 'mapmeldtest', password: 'test' })
         .expect(302)
         .end((err, res) => {
           if (err) {

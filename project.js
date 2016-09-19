@@ -58,22 +58,19 @@ function projectSetup(app, csrfProtection) {
 
     // if there are no language filters, use the active user's languages
     if (req.user) {
-      console.log('what languages?');
-      if (!readLanguages.length) {
+      if (readLanguages.length === 1 && readLanguages[0] === '') {
         readLanguages = req.user.readLanguages;
-        console.log(readLanguages);
       }
-      if (!writeLanguages.length) {
+      if (writeLanguages.length === 1 && writeLanguages[0] === '') {
         writeLanguages = req.user.writeLanguages;
-        console.log(writeLanguages);
       }
     }
 
     // add optional language filters to query
-    if (readLanguages.length) {
+    if (readLanguages.length >= 1 && readLanguages[0] !== '' && readLanguages[0] !== 'all') {
       query = query.find({ fromLanguages: { $in: readLanguages } });
     }
-    if (writeLanguages.length) {
+    if (writeLanguages.length >= 1 && writeLanguages[0] !== '' && writeLanguages[0] !== 'all') {
       query = query.find({ toLanguage: { $in: writeLanguages } });
     }
 
@@ -83,7 +80,8 @@ function projectSetup(app, csrfProtection) {
       }
 
       var rows = [];
-      while (projects.length) {
+      var projectCount = projects.length;
+      while (projects.length && rows < 4) {
         rows.push(projects.splice(0, 3));
       }
 
@@ -91,7 +89,10 @@ function projectSetup(app, csrfProtection) {
         user: req.user,
         isAdmin: (hardcodedAdmins.indexOf((req.user || {}).osm_id) > -1),
         rows: rows,
-        endlangs: endlangs
+        projectCount: projectCount,
+        endlangs: endlangs,
+        readLanguages: readLanguages,
+        writeLanguages: writeLanguages
       });
     });
   });

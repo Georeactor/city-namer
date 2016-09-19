@@ -1,5 +1,3 @@
-UI to filter projects page by languages
-
 let users know if projects have no Places to load
 change style of Message Us button and pre-expect width
 

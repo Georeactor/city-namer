@@ -55,12 +55,12 @@ const make = {
   User: (done, callback) => {
     var u = new User({
       test: true,
-      user_id: 'mapmeld',
-      osm_id: 'mapmeld',
+      user_id: 'mapmeldtest',
+      osm_id: 'mapmeldtest',
       name: 'Test',
       preferLanguage: 'English',
-      readLanguages: ['en'],
-      writeLanguages: ['en'],
+      readLanguages: ['en', 'zh', 'ne'],
+      writeLanguages: ['en', 'zh', 'ne'],
     });
     u.save((err) => {
       if (err) {
