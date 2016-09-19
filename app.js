@@ -51,7 +51,7 @@ require('./bot')(app, csrfProtection);
 app.get('/', (req, res) => {
   // include data for leaderboard
   Suggestion.aggregate({ $group: {
-    _id: '$user_id',
+    _id: '$name',
     count: { $sum: 1 },
     verified: { $sum: '$submitted' }
   }}).exec((err, results) => {

@@ -49,22 +49,33 @@ function processPlaces(xmlbody, project, callback) {
 
 function projectSetup(app, csrfProtection) {
   app.get('/projects', csrfProtection, (req, res) => {
-    var query = Project.find({}).sort('-saved');
+    // show most recent Projects
+    var query = Project.find({}).sort('-saved').limit(12);
+
+    // check for project language filters
     var readLanguages = (req.query.readLanguages || '').split(',');
     var writeLanguages = (req.query.writeLanguages || '').split(',');
-    if ((!readLanguages && !writeLanguages) && req.user) {
-      readLanguages = req.user.readLanguages;
-      writeLanguages = req.user.writeLanguages;
+
+    // if there are no language filters, use the active user's languages
+    if (req.user) {
+      console.log('what languages?');
+      if (!readLanguages.length) {
+        readLanguages = req.user.readLanguages;
+        console.log(readLanguages);
+      }
+      if (!writeLanguages.length) {
+        writeLanguages = req.user.writeLanguages;
+        console.log(writeLanguages);
+      }
     }
 
-/*
-    if (readLanguages) {
+    // add optional language filters to query
+    if (readLanguages.length) {
       query = query.find({ fromLanguages: { $in: readLanguages } });
     }
-    if (writeLanguages) {
+    if (writeLanguages.length) {
       query = query.find({ toLanguage: { $in: writeLanguages } });
     }
-    */
 
     query.exec( (err, projects) => {
       if (err) {
