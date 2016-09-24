@@ -20,7 +20,9 @@ function clear(done, callback) {
   User.find({ test: true }).remove(() => {
     //console.log('cleared users');
   });
-  callback();
+  if (callback) {
+    callback();
+  }
 }
 
 const make = {
@@ -49,7 +51,8 @@ const make = {
       osm_place_id: '201',
       name: 'test',
       osm_size: 'city',
-      suggested: 'test2',
+      suggested: '',
+      submitted: 0,
       language: 'en',
       saved: new Date(),
       project: project._id,
@@ -62,13 +65,13 @@ const make = {
     });
   },
 
-  Suggestion: (user, done, callback) => {
+  Suggestion: (user, place, done, callback) => {
     var s = new Suggestion({
       test: true,
       user_id: user._id,
       osm_user_id: user.osm_id,
-      osm_place_id: '1',
-      originalName: 'ABC',
+      osm_place_id: place.osm_place_id,
+      originalName: place.name,
       suggested: 'TestTest',
       targetLanguage: 'en',
       saved: new Date()
@@ -81,12 +84,12 @@ const make = {
     });
   },
 
-  User: (done, callback) => {
+  User: (name, done, callback) => {
     var u = new User({
       test: true,
-      user_id: 'mapmeldtest',
-      osm_id: 'mapmeldtest',
-      name: 'Test',
+      user_id: name,
+      osm_id: name,
+      name: name,
       preferLanguage: 'English',
       readLanguages: ['en', 'zh', 'ne'],
       writeLanguages: ['en', 'zh', 'ne'],
