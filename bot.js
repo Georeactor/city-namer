@@ -110,7 +110,7 @@ function sendLanguageChoiceMessage (sender, options) {
   sendReply(sender, messageData);
 }
 
-function botSetup(app, csrfProtection) {
+function botSetup(app, middleware) {
   app.get('/webhook/', (req, res) => {
     if (req.query['hub.verify_token'] === (process.env.VERIFY_TOKEN || 'my_voice_is_my_password_verify_me')) {
       res.send(req.query['hub.challenge'])

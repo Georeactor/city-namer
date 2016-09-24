@@ -5,11 +5,21 @@ const Suggestion = require('../models/suggestion');
 const User = require('../models/user');
 
 function clear(done, callback) {
-  FBUser.find({ test: true }).remove();
-  Place.find({ test: true }).remove();
-  Project.find({ test: true }).remove();
-  Suggestion.find({ test: true }).remove();
-  User.find({ test: true }).remove();
+  FBUser.find({ test: true }).remove(() => {
+    //console.log('cleared fbusers');
+  });
+  Place.find({ test: true }).remove(() => {
+    //console.log('cleared places');
+  });
+  Project.find({ test: true }).remove(() => {
+    //console.log('cleared projects');
+  });
+  Suggestion.find({ test: true }).remove(() => {
+    //console.log('cleared suggestions');
+  });
+  User.find({ test: true }).remove(() => {
+    //console.log('cleared users');
+  });
   callback();
 }
 
@@ -24,6 +34,25 @@ const make = {
       lat: 0,
       lng: 0,
       zoom: 10
+    });
+    p.save((err) => {
+      if (err) {
+        return clear(done, () => { done(err); });
+      }
+      callback(p);
+    });
+  },
+
+  Place: (project, done, callback) => {
+    var p = new Place({
+      test: true,
+      osm_place_id: '201',
+      name: 'test',
+      osm_size: 'city',
+      suggested: 'test2',
+      language: 'en',
+      saved: new Date(),
+      project: project._id,
     });
     p.save((err) => {
       if (err) {

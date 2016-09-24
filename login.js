@@ -5,7 +5,7 @@ const OpenStreetMapStrategy = require('passport-openstreetmap').Strategy;
 
 const User = require('./models/user');
 
-function userSetup(app, csrfProtection) {
+function userSetup(app, middleware) {
   // Passport module setup
   app.use(passport.initialize());
   app.use(passport.session());
@@ -55,7 +55,7 @@ function userSetup(app, csrfProtection) {
   });
 
   // user registration form
-  app.get('/register', csrfProtection, (req, res) => {
+  app.get('/register', middleware, (req, res) => {
     res.render('register', {
       user: req.user,
       csrfToken: req.csrfToken()
@@ -63,13 +63,13 @@ function userSetup(app, csrfProtection) {
   });
 
   // user login form
-  app.get('/login', csrfProtection, (req, res) => {
+  app.get('/login', middleware, (req, res) => {
     res.render('login', {
       csrfToken: req.csrfToken()
     });
   });
 
-  app.post('/login', csrfProtection, (req, res) => {
+  app.post('/login', middleware, (req, res) => {
     res.redirect('/projects');
   });
 
@@ -79,7 +79,7 @@ function userSetup(app, csrfProtection) {
   });
 
   // respond to user POST
-  app.post('/register', csrfProtection, (req, res) => {
+  app.post('/register', middleware, (req, res) => {
     if (!req.user) {
       return res.redirect('/login');
     }

@@ -5,6 +5,7 @@ const app = require('../app');
 const common = require('./common');
 
 const Project = require('../models/project');
+const Suggestion = require('../models/suggestion');
 
 describe('logged out', () => {
   it('returns homepage with login button', (done) => {
@@ -47,6 +48,54 @@ describe('logged out', () => {
         assert.include(res.text, 'Redirecting to /login')
         common.clear(done, done);
       });
+  });
+
+  it('cannot create a new Project', (done) => {
+    request(app)
+      .post('/projects/new')
+      .send({
+        fromLanguages: ['fr', 'en'],
+        toLanguage: 'ht',
+        directions: 'sample',
+        north: 1,
+        south: -1,
+        east: 1,
+        west: -1,
+        lat: 0,
+        lng: 0,
+        zoom: 14
+      })
+      .expect(302)
+      .end((err, res) => {
+        if (err) {
+          return common.clear(done, () => { done(err); });
+        }
+        assert.include(res.text, 'Redirecting to /login')
+        common.clear(done, done);
+      });
+  });
+
+  it('cannot submit a Suggestion to a Project', (done) => {
+    common.make.Project(done, (project) => {
+      common.make.Place(project, done, (place) => {
+        request(app)
+          .post('/name')
+          .send({
+            osm_place_id: place.osm_place_id,
+            originalName: place.name,
+            suggested: 'fakename',
+            targetLanguage: 'en',
+          })
+          .expect(302)
+          .end((err, res) => {
+            if (err) {
+              return common.clear(done, () => { done(err); });
+            }
+            assert.include(res.text, 'Redirecting to /login')
+            common.clear(done, done);
+          });
+      });
+    });
   });
 });
 
@@ -109,5 +158,70 @@ describe('logged in', () => {
         assert.include(res.text, 'Creating a City-Namer Project');
         common.clear(done, done);
       });
+  });
+
+  it('creates a new Project', (done) => {
+    agent
+      .post('/projects/new')
+      .send({
+        fromLanguages: ['fr', 'en'],
+        toLanguage: 'ht',
+        directions: 'sample',
+        north: 1,
+        south: -1,
+        east: 1,
+        west: -1,
+        lat: 0,
+        lng: 0,
+        zoom: 14
+      })
+      .expect(302)
+      .end((err, res) => {
+        if (err) {
+          return common.clear(done, () => { done(err); });
+        }
+        assert.include(res.text, 'Redirecting to /projects/');
+        Project.find({ directions: 'sample' }, (err, projects) => {
+          if (err) {
+            console.log(err);
+            return common.clear(done, () => { done(err); });
+          }
+          Project.find({ directions: 'sample' }).remove(() => {});
+          assert.equal(projects.length, 1);
+          common.clear(done, done);
+        });
+      });
+  });
+
+  it('submits a Suggestion to a Project', (done) => {
+    common.make.Project(done, (project) => {
+      common.make.Place(project, done, (place) => {
+        agent
+          .post('/name')
+          .send({
+            osm_place_id: place.osm_place_id,
+            originalName: place.name,
+            suggested: 'fakename',
+            targetLanguage: 'en',
+          })
+          .expect(200)
+          .end((err, res) => {
+            if (err) {
+              return common.clear(done, () => { done(err); });
+            }
+            assert.include(res.text, 'success');
+            Suggestion.find({ suggested: 'fakename' }, (err, suggestions) => {
+              if (err) {
+                console.log(err);
+                return common.clear(done, () => { done(err); });
+              }
+              Suggestion.find({ suggested: 'fakename' }).remove(() => {});
+              assert.equal(suggestions.length, 1);
+              assert.equal(suggestions[0].submitted, 0);
+              common.clear(done, done);
+            });
+          });
+      });
+    });
   });
 });

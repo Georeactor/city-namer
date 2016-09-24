@@ -47,8 +47,8 @@ function processPlaces(xmlbody, project, callback) {
   callback();
 }
 
-function projectSetup(app, csrfProtection) {
-  app.get('/projects', csrfProtection, (req, res) => {
+function projectSetup(app, middleware) {
+  app.get('/projects', middleware, (req, res) => {
     // show most recent Projects
     var query = Project.find({}).sort('-saved').limit(12);
 
@@ -97,7 +97,7 @@ function projectSetup(app, csrfProtection) {
     });
   });
 
-  app.get('/projects/new', csrfProtection, (req, res) => {
+  app.get('/projects/new', middleware, (req, res) => {
     if (!req.user) {
       return res.redirect('/login');
     }
@@ -108,7 +108,7 @@ function projectSetup(app, csrfProtection) {
     });
   });
 
-  app.post('/projects/new', csrfProtection, (req, res) => {
+  app.post('/projects/new', middleware, (req, res) => {
     if (!req.user) {
       return res.redirect('/login');
     }
@@ -134,14 +134,7 @@ function projectSetup(app, csrfProtection) {
         return res.json(err);
       }
 
-      // one-time Overpass query for Places
-      checkForNameless({
-        north: req.body.north,
-        south: req.body.south,
-        east: req.body.east,
-        west: req.body.west,
-        targetLang: req.body.toLanguage
-      }, (err, body) => {
+      function loadPlaces(err, body) {
         if (err) {
           console.log('Overpass API error');
           return res.json(err);
@@ -152,12 +145,25 @@ function projectSetup(app, csrfProtection) {
           }
           res.redirect('/projects/' + p._id);
         });
-      });
+      }
+
+      // one-time Overpass query for Places
+      if (typeof global.it === 'function') {
+        loadPlaces(null, '<empty></empty>');
+      } else {
+        checkForNameless({
+          north: req.body.north,
+          south: req.body.south,
+          east: req.body.east,
+          west: req.body.west,
+          targetLang: req.body.toLanguage
+        }, loadPlaces);
+      }
     });
   });
 
   // naming app screen
-  app.get('/projects/:id', csrfProtection, (req, res) => {
+  app.get('/projects/:id', middleware, (req, res) => {
     Project.findById(req.params.id, (err, project) => {
       if (err) {
         return res.json(err);

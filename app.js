@@ -38,14 +38,28 @@ app.use(session({
 
 const csrfProtection = csrf({ cookie: true });
 
+/* for use in testing only */
+function passThrough(req, res, next) {
+  if (typeof global.it === 'function') {
+    if (req.method === 'POST') {
+      next();
+    } else {
+      return csrfProtection(req, res, next);
+    }
+  } else {
+    throw 'passThrough happening in production';
+  }
+}
+const middleware = ((typeof global.it === 'function') ? passThrough : csrfProtection);
+
 // user registration and management
-require('./login')(app, csrfProtection);
+require('./login')(app, middleware);
 
 // task manager / projects interface
-require('./project')(app, csrfProtection);
+require('./project')(app, middleware);
 
 // Facebook Messenger bot interface
-require('./bot')(app, csrfProtection);
+require('./bot')(app, middleware);
 
 // homepage for testing
 app.get('/', (req, res) => {
@@ -77,7 +91,7 @@ app.get('/', (req, res) => {
 });
 
 // save a suggested place-name translation to the database
-app.post('/name', csrfProtection, (req, res) => {
+app.post('/name', middleware, (req, res) => {
   if (!req.user) {
     return res.redirect('/login');
   }
@@ -89,6 +103,7 @@ app.post('/name', csrfProtection, (req, res) => {
     originalName: req.body.name,
     suggested: req.body.suggested,
     targetLanguage: req.body.language,
+    submitted: 0,
     saved: new Date()
   });
   p.save((err) => {
