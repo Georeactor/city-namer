@@ -39,7 +39,7 @@ const make = {
     });
     p.save((err) => {
       if (err) {
-        return clear(done, () => { done(err); });
+        return done(err);
       }
       callback(p);
     });
@@ -59,7 +59,7 @@ const make = {
     });
     p.save((err) => {
       if (err) {
-        return clear(done, () => { done(err); });
+        return done(err);
       }
       callback(p);
     });
@@ -78,9 +78,22 @@ const make = {
     });
     s.save((err) => {
       if (err) {
-        return clear(done, () => { done(err); });
+        return done(err);
       }
       callback(s);
+    });
+  },
+
+  FBUser: (done, callback) => {
+    var f = new FBUser({
+      test: true,
+      user_id: 'test'
+    });
+    f.save((err) => {
+      if (err) {
+        return done(err);
+      }
+      callback(f);
     });
   },
 
@@ -96,7 +109,7 @@ const make = {
     });
     u.save((err) => {
       if (err) {
-        return clear(done, () => { done(err); });
+        return done(err);
       }
       callback(u);
     });
