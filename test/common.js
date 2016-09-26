@@ -1,3 +1,5 @@
+const request = require('supertest');
+
 const FBUser = require('../models/fb-user');
 const Place = require('../models/place');
 const Project = require('../models/project');
@@ -87,7 +89,8 @@ const make = {
   FBUser: (done, callback) => {
     var f = new FBUser({
       test: true,
-      user_id: 'test'
+      user_id: 'test',
+      blocked: false
     });
     f.save((err) => {
       if (err) {
@@ -106,6 +109,7 @@ const make = {
       preferLanguage: 'English',
       readLanguages: ['en', 'zh', 'ne'],
       writeLanguages: ['en', 'zh', 'ne'],
+      blocked: false
     });
     u.save((err) => {
       if (err) {
@@ -116,7 +120,25 @@ const make = {
   }
 };
 
+const fbmessage = (app, msg, callback) => {
+  var combinedMessage = msg;
+  msg.sender = {
+    id: 'test'
+  };
+  request(app)
+    .post('/webhook')
+    .send({
+      test: true,
+      entry: [{
+        messaging: [combinedMessage]
+      }]
+    })
+    .expect(200)
+    .end(callback);
+};
+
 module.exports = {
   clear: clear,
-  make: make
+  make: make,
+  fbmessage: fbmessage
 };

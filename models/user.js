@@ -7,6 +7,7 @@ const userSchema = mongoose.Schema({
   preferLanguage: String,
   readLanguages: [String],
   writeLanguages: [String],
+  blocked: Boolean,
   test: Boolean
 });
 

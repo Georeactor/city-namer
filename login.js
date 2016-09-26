@@ -37,7 +37,8 @@ function userSetup(app, middleware) {
           var u = new User({
             osm_id: osm_user_name,
             user_id: osm_user_name,
-            name: 'unset'
+            name: 'unset',
+            blocked: false
           });
           u.save((err) => {
             done(err, u);

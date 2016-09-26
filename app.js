@@ -92,7 +92,7 @@ app.get('/', (req, res) => {
 
 // save a suggested place-name translation to the database
 app.post('/name', middleware, (req, res) => {
-  if (!req.user) {
+  if (!req.user || req.user.blocked) {
     return res.redirect('/login');
   }
   // check for any previous, overlapping Suggestions

@@ -8,6 +8,7 @@ const fbUserSchema = mongoose.Schema({
   readLanguages: [String],
   writeLanguages: [String],
   lastPlace: String,
+  blocked: Boolean,
   test: Boolean
 });
 

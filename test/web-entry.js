@@ -113,21 +113,13 @@ describe('logged in', () => {
 
   it('logs in', (done) => {
     common.make.User('mapmeldtest', done, (u) => {
+      commonUser = u;
       agent
         .post('/auth/local')
         .send({ username: 'mapmeldtest', password: 'test' })
         .expect(302)
         .end((err, res) => {
-          if (err) {
-            return done(err);
-          }
-          User.findOne({ test: true }, (err, user) => {
-            if (err) {
-              return done(err);
-            }
-            commonUser = user;
-            done();
-          });
+          return done(err);
         });
     });
   });
@@ -337,6 +329,80 @@ describe('logged in', () => {
           });
         });
       });
+    });
+  });
+});
+
+describe('logged in but blocked', () => {
+  const agent = request.agent(app);
+  var commonUser;
+
+  after(() => {
+    common.clear();
+  });
+
+  it('logs in', (done) => {
+    common.make.User('mapmeldtest', done, (u) => {
+      u.blocked = true;
+      commonUser = u;
+      u.save((err) => {
+        if (err) {
+          return done(err);
+        }
+        agent
+          .post('/auth/local')
+          .send({ username: 'mapmeldtest', password: 'test' })
+          .expect(302)
+          .end((err, res) => {
+            done(err);
+          });
+      });
+    });
+  });
+
+  it('cannot create a new Project', (done) => {
+    agent
+      .post('/projects/new')
+      .send({
+        fromLanguages: ['fr', 'en'],
+        toLanguage: 'ht',
+        directions: 'sample',
+        north: 1,
+        south: -1,
+        east: 1,
+        west: -1,
+        lat: 0,
+        lng: 0,
+        zoom: 14
+      })
+      .expect(302)
+      .end((err, res) => {
+        if (err) {
+          return done(err);
+        }
+        assert.include(res.text, 'Redirecting to /login')
+        done();
+      });
+  });
+
+  it('cannot submit a Suggestion to a Place', (done) => {
+    common.make.Place('101', done, (place) => {
+      agent
+        .post('/name')
+        .send({
+          osm_place_id: place.osm_place_id,
+          originalName: place.name,
+          suggested: 'fakename',
+          language: 'en',
+        })
+        .expect(302)
+        .end((err, res) => {
+          if (err) {
+            return done(err);
+          }
+          assert.include(res.text, 'Redirecting to /login')
+          done();
+        });
     });
   });
 });

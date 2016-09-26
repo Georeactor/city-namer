@@ -20,7 +20,7 @@ function sendLabelTo(user) {
     if (!places.length) {
       return sendReply(user.user_id, { text: 'no more places for you to translate :(' });
     }
-    var selectPlace = places[Math.floor(20 * Math.random())];
+    var selectPlace = places[Math.floor(places.length * Math.random())];
 
     user.lastPlace = [selectPlace.osm_place_id, selectPlace.language, selectPlace.name].join('___');
     user.save((err) => {
@@ -116,7 +116,8 @@ function botSetup(app, middleware) {
         if (!user) {
           // first time seeing this user
           user = new FBUser({
-            user_id: sender
+            user_id: sender,
+            blocked: false
           });
           user.save((err) => {
             if (err) {
@@ -130,7 +131,6 @@ function botSetup(app, middleware) {
             }
           });
         } else if (event.postback) {
-          console.log('proof of postback');
           var code = event.postback.payload.split(':');
           if (code.length === 3 && code[0] === 'rw') {
             if (user.readLanguages.indexOf(code[1]) === -1) {
@@ -143,19 +143,20 @@ function botSetup(app, middleware) {
               if (err) {
                 return console.log(err);
               }
-              sendLabelTo(user);
+              return sendLabelTo(user);
             });
           }
         } else if (event.message && event.message.text) {
           var text = event.message.text;
-          if (user.lastPlace) {
+          if (user.lastPlace && !user.blocked) {
             var lastPlace = user.lastPlace.split('___');
             var p = new Suggestion({
               user_id: 'fb:' + user.user_id,
-              osm_place_id: user.lastPlace[0],
-              originalName: user.lastPlace[2],
+              osm_place_id: lastPlace[0],
+              originalName: lastPlace[2],
               suggested: text.trim(),
-              targetLanguage: user.lastPlace[1],
+              submitted: 0,
+              targetLanguage: lastPlace[1],
               saved: new Date()
             });
             p.save((err) => {
@@ -187,8 +188,6 @@ function botSetup(app, middleware) {
               sendLabelTo(user);
             });
           } else {
-            console.log(user);
-
             sendReply(sender, {
               text: 'Text received, echo: ' + text.substring(0, 100)
             });

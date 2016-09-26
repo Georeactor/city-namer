@@ -98,7 +98,7 @@ function projectSetup(app, middleware) {
   });
 
   app.get('/projects/new', middleware, (req, res) => {
-    if (!req.user) {
+    if (!req.user || req.user.blocked) {
       return res.redirect('/login');
     }
 
@@ -109,7 +109,7 @@ function projectSetup(app, middleware) {
   });
 
   app.post('/projects/new', middleware, (req, res) => {
-    if (!req.user) {
+    if (!req.user || req.user.blocked) {
       return res.redirect('/login');
     }
 
