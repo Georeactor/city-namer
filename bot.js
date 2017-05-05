@@ -8,12 +8,12 @@ var replyToTest = null;
 
 function sendLabelTo(user) {
   var criteria = {
-
+    language: "ne"
   };
   if (replyToTest) {
     criteria.test = true;
   }
-  Place.find(criteria).limit(20).exec((err, places) => {
+  Place.find(criteria).limit(40).exec((err, places) => {
     if (err) {
       return console.log(err);
     }
