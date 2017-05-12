@@ -10,6 +10,9 @@ const compression = require('compression');
 const mongoose = require('mongoose');
 const csrf = require('csurf');
 
+// browser city-renaming
+const checkForNameless = require('check-for-nameless');
+
 // my MongoDB models
 const Suggestion = require('./models/suggestion');
 const Place = require('./models/place');
@@ -69,6 +72,9 @@ app.get('/', (req, res) => {
     count: { $sum: 1 },
     verified: { $sum: '$submitted' }
   }}).exec((err, results) => {
+    if (!results) {
+      results = [];
+    }
 
     // leaderboard should shop top users (web and Facebook)
     var leaders = [];
@@ -87,6 +93,21 @@ app.get('/', (req, res) => {
       user: req.user,
       leaders: leaders.slice(0, 4)
     });
+  });
+});
+
+app.post('/overpass', middleware, (req, res) => {
+  checkForNameless({
+    north: req.body.north,
+    south: req.body.south,
+    east: req.body.east,
+    west: req.body.west,
+    targetLang: req.body.toLanguage
+  }, (err, body) => {
+    if (err) {
+      console.log('Overpass API error');
+    }
+    return res.send(body || err);
   });
 });
 
