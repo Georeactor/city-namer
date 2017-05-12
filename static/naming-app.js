@@ -6,13 +6,29 @@ $(function() {
   // list of already-solved OSM ids
   var solved = [];
 
+  // order of importance for a place=___ tag (translate a country before a state before a city)
+  var placeRelevance = ['hamlet', 'village', 'town', 'plot', 'city_block', 'neighborhood',
+    'neighbourhood', 'quarter', 'island', 'suburb', 'borough', 'city', 'municipality', 'county',
+    'district', 'province', 'region', 'state', 'country'];
+
   // language where labels are being added
   var altLangs = $.map(fromLanguages, function (altLang) {
     return 'tag[k="name:' + altLang + '"]';
   }).join(', ');
+  
+  // correct a weird error with lng coordinate being > +180 or < -180
+  function lngCorrection(lng) {
+    while (lng > 180) {
+      lng -= 360;
+    }
+    while (lng < -180) {
+      lng += 360;
+    }
+    return lng;
+  }
 
   // set up Leaflet map
-  var map = L.map('map').setView(view.slice(0, 2), view[2]);
+  var map = L.map('map').setView([view[0], lngCorrection(view[1])], view[2]);
   map.attributionControl.setPrefix('');
   L.tileLayer('//tile-{s}.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
@@ -43,15 +59,24 @@ $(function() {
     var customQuery = {
       north: bbox.getNorthEast().lat.toFixed(6),
       south: bbox.getSouthWest().lat.toFixed(6),
-      east: bbox.getNorthEast().lng.toFixed(6),
-      west: bbox.getSouthWest().lng.toFixed(6),
+      east: lngCorrection(bbox.getNorthEast().lng).toFixed(6),
+      west: lngCorrection(bbox.getSouthWest().lng).toFixed(6),
       fromLanguages: fromLanguages,
       targetLang: targetLang,
       _csrf: $('#csrf').val()
     };
 
     // POST to server, which makes actual API call
-    $.post('/overpass', customQuery, function(pts) {
+    $.post('/overpass', customQuery, function(data) {
+      var pts = $(data).find('node');
+      
+      // sort points by importance of place=___ tag
+      pts.sort(function (a, b) {
+        var aplace = $(a).find('tag[k="place"]').attr("v");
+        var bplace = $(b).find('tag[k="place"]').attr("v");
+        return placeRelevance.indexOf(bplace) - placeRelevance.indexOf(aplace);
+      });
+      
       $.each(pts, function (p, pt) {
         var pt = $(pt);
 
@@ -70,7 +95,7 @@ $(function() {
         }).join('<br/>');
 
         // add a circleMarker to represent the point
-        pt.circle = L.circleMarker([ pt.attr('lat'), pt.attr('lon') ])
+        pt.circle = L.circleMarker([ pt.attr('lat') * 1, pt.attr('lon') * 1 ])
           .bindPopup(tagtext);
         pt.circle.addTo(map);
         markers.push(pt);

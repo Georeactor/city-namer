@@ -19,7 +19,7 @@
   "homepage": "https://github.com/Georeactor/city-namer#readme",
   "dependencies": {
     "body-parser": "^1.15.2",
-    "check-for-nameless": "^1.0.0",
+    "check-for-nameless": "^1.1.1",
     "cheerio": "^0.22.0",
     "compression": "^1.6.2",
     "connect-mongo": "^1.3.2",
