@@ -1,5 +1,7 @@
 # city-namer
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/Georeactor/city-namer.svg)](https://greenkeeper.io/)
+
 <img src="http://i.imgur.com/xXSdvdj.png" alt="Application screenshot"/>
 
 Concept: browse OpenStreetMap and find city names to localize into a
