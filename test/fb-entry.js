@@ -12,8 +12,8 @@ const Suggestion = require('../models/suggestion');
 describe('creating an account', () => {
   var commonUser;
 
-  after(() => {
-    common.clear();
+  after((done) => {
+    common.clear(done);
   });
 
   it('welcomes a new user', (done) => {

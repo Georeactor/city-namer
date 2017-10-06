@@ -1,3 +1,4 @@
+const assert = require('assert');
 const request = require('supertest');
 
 const FBUser = require('../models/fb-user');
@@ -24,6 +25,8 @@ function clear(done, callback) {
   });
   if (callback) {
     callback();
+  } else {
+    done();
   }
 }
 
@@ -136,6 +139,12 @@ const fbmessage = (app, msg, callback) => {
     .expect(200)
     .end(callback);
 };
+
+describe('empty test', () => {
+  it('contains a test in every file', () => {
+    assert.equal(1, 1);
+  });
+});
 
 module.exports = {
   clear: clear,

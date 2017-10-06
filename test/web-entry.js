@@ -10,8 +10,8 @@ const Place = require('../models/place');
 const Suggestion = require('../models/suggestion');
 
 describe('logged out', () => {
-  after(() => {
-    common.clear();
+  after((done) => {
+    common.clear(done);
   });
 
   it('returns homepage with login button', (done) => {
@@ -107,8 +107,8 @@ describe('logged in', () => {
   const agent = request.agent(app);
   var commonUser;
 
-  after(() => {
-    common.clear();
+  after((done) => {
+    common.clear(done);
   });
 
   it('logs in', (done) => {
@@ -337,8 +337,8 @@ describe('logged in but blocked', () => {
   const agent = request.agent(app);
   var commonUser;
 
-  after(() => {
-    common.clear();
+  after((done) => {
+    common.clear(done);
   });
 
   it('logs in', (done) => {
