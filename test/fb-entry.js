@@ -1,6 +1,6 @@
 const assert = require('chai').assert;
-const app = require('../app');
 const common = require('./common');
+const app = common.app;
 
 const FBUser = require('../models/fb-user');
 const Project = require('../models/project');
@@ -12,8 +12,8 @@ const Suggestion = require('../models/suggestion');
 describe('creating an account', () => {
   var commonUser;
 
-  after((done) => {
-    common.clear(done);
+  after(() => {
+    common.clear();
   });
 
   it('welcomes a new user', (done) => {

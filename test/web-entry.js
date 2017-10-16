@@ -1,8 +1,8 @@
 const assert = require('chai').assert;
 const request = require('supertest');
 
-const app = require('../app');
 const common = require('./common');
+const app = common.app;
 
 const User = require('../models/user');
 const Project = require('../models/project');
@@ -10,8 +10,8 @@ const Place = require('../models/place');
 const Suggestion = require('../models/suggestion');
 
 describe('logged out', () => {
-  after((done) => {
-    common.clear(done);
+  after(() => {
+    common.clear();
   });
 
   it('returns homepage with login button', (done) => {
@@ -107,8 +107,8 @@ describe('logged in', () => {
   const agent = request.agent(app);
   var commonUser;
 
-  after((done) => {
-    common.clear(done);
+  after(() => {
+    common.clear();
   });
 
   it('logs in', (done) => {
@@ -337,8 +337,8 @@ describe('logged in but blocked', () => {
   const agent = request.agent(app);
   var commonUser;
 
-  after((done) => {
-    common.clear(done);
+  after(() => {
+    common.clear();
   });
 
   it('logs in', (done) => {

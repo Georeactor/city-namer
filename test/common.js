@@ -1,6 +1,7 @@
 const assert = require('assert');
 const request = require('supertest');
 
+const app = require('../app');
 const FBUser = require('../models/fb-user');
 const Place = require('../models/place');
 const Project = require('../models/project');
@@ -25,7 +26,7 @@ function clear(done, callback) {
   });
   if (callback) {
     callback();
-  } else {
+  } else if (typeof done === 'function') {
     done();
   }
 }
@@ -140,14 +141,11 @@ const fbmessage = (app, msg, callback) => {
     .end(callback);
 };
 
-describe('empty test', () => {
-  it('contains a test in every file', () => {
-    assert.equal(1, 1);
-  });
-});
+setTimeout(app.turnoff, 40000);
 
 module.exports = {
   clear: clear,
   make: make,
-  fbmessage: fbmessage
+  fbmessage: fbmessage,
+  app: app
 };

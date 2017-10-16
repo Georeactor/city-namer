@@ -19,10 +19,14 @@ const Place = require('./models/place');
 const User = require('./models/user');
 const FBUser = require('./models/fb-user');
 
-console.log('Connecting to MongoDB (required)');
-mongoose.connect(process.env.MONGOLAB_URI || process.env.MONGODB_URI || 'localhost');
-
 var app = express();
+
+app.turnon = function() {
+  console.log('Connecting to MongoDB (required)');
+  mongoose.connect(process.env.MONGOLAB_URI || process.env.MONGODB_URI || 'localhost');
+};
+app.turnon();
+
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 app.use(express['static'](__dirname + '/static'));
@@ -211,5 +215,10 @@ app.get('/verify', (req, res) => {
 app.listen(process.env.PORT || 8080, () => {
   console.log('app is running');
 });
+
+app.turnoff = function() {
+  mongoose.connection.close();
+  app.close();
+};
 
 module.exports = app;
