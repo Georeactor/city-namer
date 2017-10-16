@@ -38,9 +38,7 @@ app.use(session({
   store: new MongoStore({
     mongooseConnection: mongoose.connection
   }),
-  secret: process.env.SESSION || 'fj23f90jfoijfl2mfp293i019eoijdoiqwj129',
-  resave: false,
-  saveUninitialized: false
+  secret: process.env.SESSION || 'fj23f90jfoijfl2mfp293i019eoijdoiqwj129'
 }));
 
 const csrfProtection = csrf({ cookie: true });
