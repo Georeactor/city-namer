@@ -23,7 +23,7 @@ var app = express();
 
 app.turnon = function() {
   console.log('Connecting to MongoDB (required)');
-  mongoose.connect(process.env.MONGOLAB_URI || process.env.MONGODB_URI || 'localhost');
+  mongoose.connect(process.env.MONGOLAB_URI || process.env.MONGODB_URI || 'mongodb://localhost');
 };
 app.turnon();
 
