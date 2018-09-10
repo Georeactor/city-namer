@@ -23,7 +23,7 @@ var app = express();
 
 app.turnon = function() {
   console.log('Connecting to MongoDB (required)');
-  mongoose.connect(process.env.MONGOLAB_URI || process.env.MONGODB_URI || 'mongodb://localhost');
+  mongoose.connect(process.env.MONGOLAB_URI || process.env.MONGODB_URI || 'mongodb://localhost:27017/citynamer');
 };
 app.turnon();
 
@@ -69,11 +69,11 @@ require('./bot')(app, middleware);
 // homepage for testing
 app.get('/', (req, res) => {
   // include data for leaderboard
-  Suggestion.aggregate({ $group: {
+  Suggestion.aggregate([{ $group: {
     _id: '$name',
     count: { $sum: 1 },
     verified: { $sum: '$submitted' }
-  }}).exec((err, results) => {
+  }}]).exec((err, results) => {
     if (!results) {
       results = [];
     }
@@ -154,7 +154,7 @@ app.post('/name', middleware, (req, res) => {
         targetLanguage: req.body.language,
         suggested: normalizeSuggested
       };
-      Suggestion.count(matchingKeys, (err, scount) => {
+      Suggestion.countDocuments(matchingKeys, (err, scount) => {
         if (err) {
           return res.json(err);
         }
@@ -200,7 +200,7 @@ app.post('/name', middleware, (req, res) => {
 
 app.get('/verify', (req, res) => {
   // temporary data check for whether we are ready to verify any Suggestions
-  Place.aggregate({ $group: { _id: "$osm_place_id", count: { $sum: 1 } } }).exec((err, results) => {
+  Place.aggregate([{ $group: { _id: "$osm_place_id", count: { $sum: 1 } } }]).exec((err, results) => {
     if (results && results.length) {
       results.sort((a, b) => {
         return a.count - b.count;
